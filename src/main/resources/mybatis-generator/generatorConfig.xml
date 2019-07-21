@@ -72,6 +72,7 @@
         <table tableName="lyj_user" schema=""/>
         <table tableName="lyj_volunteer" schema=""/>
         -->
+        <table tableName="lyj_requirement_type" schema=""/>
 
 
     </context>

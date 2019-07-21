@@ -9,6 +9,15 @@
     <id column="lyj_requirement_id" property="lyjRequirementId" jdbcType="INTEGER" />
     <id column="lyj_requirement_typeid" property="lyjRequirementTypeid" jdbcType="INTEGER" />
   </resultMap>
+
+  <!-- 根据需求类型ID找到所有的需求ID -->
+  <select id="getRequirementidsByTypeid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select lyj_requirement_id
+    from lyj_requirementtype_relation
+    where lyj_requirement_typeid = #{lyjRequirementTypeid,jdbcType=INTEGER}
+    order by lyj_requirement_id
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="map" >
     <!--
       WARNING - @mbggenerated
@@ -18,6 +27,13 @@
     where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
       and lyj_requirement_typeid = #{lyjRequirementTypeid,jdbcType=INTEGER}
   </delete>
+
+  <!-- 根据需求ID删除所有的关系数据 -->
+  <delete id="deleteByRequirementId">
+    delete from lyj_requirementtype_relation
+    where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
+  </delete>
+
   <insert id="insert" parameterType="com.feng.oldfriend.entity.LyjRequirementtypeRelation" >
     <!--
       WARNING - @mbggenerated

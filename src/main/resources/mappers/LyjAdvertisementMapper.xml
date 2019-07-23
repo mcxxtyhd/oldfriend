@@ -14,6 +14,17 @@
     <result column="lyj_advertisement_page" property="lyjAdvertisementPage" jdbcType="VARCHAR" />
     <result column="lyj_advertisement_pageurl" property="lyjAdvertisementPageurl" jdbcType="VARCHAR" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+      lyj_advertisement.lyj_advertisement_id,
+      lyj_advertisement.lyj_advertisement_name,
+      lyj_advertisement.lyj_advertisement_imageurl,
+      lyj_advertisement.lyj_advertisement_begindatetime,
+      lyj_advertisement.lyj_advertisement_enddatetime,
+      lyj_advertisement.lyj_advertisement_page,
+      lyj_advertisement.lyj_advertisement_pageurl
+  </sql>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     <!--
       WARNING - @mbggenerated
@@ -71,4 +82,13 @@
     lyj_advertisement_pageurl
     from lyj_advertisement
   </select>
+
+  <!--根据广告页返回指定的广告信息-->
+  <select id="selectAdvertisementsByPagename" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List"/>
+    from lyj_advertisement
+    where lyj_advertisement_page=#{pageName}
+  </select>
+
 </mapper>

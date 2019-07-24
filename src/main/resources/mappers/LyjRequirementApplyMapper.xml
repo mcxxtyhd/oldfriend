@@ -15,6 +15,17 @@
     <result column="lyj_requirement_applyrequirementid" property="lyjRequirementApplyrequirementid" jdbcType="INTEGER" />
     <result column="lyj_requirement_applyduration" property="lyjRequirementApplyduration" jdbcType="INTEGER" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+      lyj_requirement_apply.lyj_requirement_applyid,
+      lyj_requirement_apply.lyj_user_id,
+      lyj_requirement_apply.lyj_volunteer_id,
+      lyj_requirement_apply.lyj_requirement_applystate,
+      lyj_requirement_apply.lyj_requirement_applycomment,
+      lyj_requirement_apply.lyj_requirement_applystar,
+      lyj_requirement_apply.lyj_requirement_applyrequirementid,
+      lyj_requirement_apply.lyj_requirement_applyduration
+  </sql>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     <!--
       WARNING - @mbggenerated
@@ -54,6 +65,15 @@
       lyj_requirement_applyduration = #{lyjRequirementApplyduration,jdbcType=INTEGER}
     where lyj_requirement_applyid = #{lyjRequirementApplyid,jdbcType=INTEGER}
   </update>
+
+  <!--将除了某个申请ID外的其他同一申请需求的申请置为申请失败-->
+  <update id="updateApplyFailed">
+    update lyj_requirement_apply
+    set lyj_requirement_applystate = #{lyjRequirementApplystate,jdbcType=INTEGER}
+    where lyj_requirement_applyid = #{requirementApplyId,jdbcType=INTEGER}
+    and lyj_requirement_applyrequirementid=#{requirementId,jdbcType=INTEGER}
+  </update>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     <!--
       WARNING - @mbggenerated
@@ -74,5 +94,15 @@
     lyj_requirement_applycomment, lyj_requirement_applystar, lyj_requirement_applyrequirementid, 
     lyj_requirement_applyduration
     from lyj_requirement_apply
+  </select>
+
+  <!--根据需求ID查询所有的申请-->
+  <select id="selectByRequirementId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List"/>
+    from lyj_requirement_apply
+    <if test="lyjRequirementId!=null and lyjRequirementId!=0 ">
+      where lyj_requirement_applyrequirementid= #{pattern}
+    </if>
   </select>
 </mapper>

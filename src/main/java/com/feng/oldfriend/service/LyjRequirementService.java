@@ -13,9 +13,9 @@ public interface LyjRequirementService {
      */
     List<LyjRequirement> getRequirements(String searchText,Integer typeId);
 
-    void saveRequirement(Integer typeId,LyjRequirement config);
+    void saveRequirement(Integer typeId,LyjRequirement lyjRequirement);
 
-    void updateRequirement(LyjRequirement config);
+    void updateRequirement(LyjRequirement lyjRequirement);
 
     void removeRequirement(Integer id);
 }

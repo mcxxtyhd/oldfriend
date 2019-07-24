@@ -38,18 +38,18 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
 
     @Override
     @Transactional
-    public void saveRequirement(Integer typeId,LyjRequirement config) {
+    public void saveRequirement(Integer typeId,LyjRequirement lyjRequirement) {
         //1、先增加需求
-        config.setLyjRequirementCreatedatetime(new Date());
-        lyjRequirementMapper.insert(config);
-        Integer requirementId=config.getLyjRequirementId();
+        lyjRequirement.setLyjRequirementCreatedatetime(new Date());
+        lyjRequirementMapper.insert(lyjRequirement);
+        Integer requirementId=lyjRequirement.getLyjRequirementId();
         //2、再增加需求和类型关系表的数据
         lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId,typeId));
     }
 
     @Override
-    public void updateRequirement(LyjRequirement config) {
-        lyjRequirementMapper.updateByPrimaryKey(config);
+    public void updateRequirement(LyjRequirement lyjRequirement) {
+        lyjRequirementMapper.updateByPrimaryKey(lyjRequirement);
     }
 
     @Override

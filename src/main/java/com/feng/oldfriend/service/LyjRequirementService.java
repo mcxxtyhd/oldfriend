@@ -13,6 +13,13 @@ public interface LyjRequirementService {
      */
     List<LyjRequirement> getRequirements(String searchText,Integer typeId);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/28 14:46
+     * description: 根据需求ID查找到详情
+     */
+    LyjRequirement getRequirementById(Integer requirementId);
+
     void saveRequirement(Integer typeId,LyjRequirement lyjRequirement);
 
     void updateRequirement(LyjRequirement lyjRequirement);

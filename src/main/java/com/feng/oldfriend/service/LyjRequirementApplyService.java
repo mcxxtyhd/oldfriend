@@ -1,6 +1,8 @@
 package com.feng.oldfriend.service;
 
+import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementApply;
+import com.feng.oldfriend.entity.LyjRequirementApplyField;
 
 import java.util.List;
 
@@ -12,6 +14,14 @@ public interface LyjRequirementApplyService {
      * description: 根据需求ID查询所有的申请
      */
     List<LyjRequirementApply> getRequirementApplys(Integer requirementId);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/21 11:05
+     * description: 根据参数(搜索内容,创建人ID，需求的状态)进行查找
+     */
+    List<LyjRequirementApplyField> getRequirementByParams(String searchText, Integer userId, Integer status);
+
 
     void saveRequirementApply(LyjRequirementApply lyjRequirementApply);
 

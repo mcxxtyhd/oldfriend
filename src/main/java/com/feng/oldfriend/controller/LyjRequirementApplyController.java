@@ -34,7 +34,7 @@ public class LyjRequirementApplyController {
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
             @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需求ID", required = true)
     })
-    @GetMapping("/{requirementId}")
+    @GetMapping()
     public ResponseEntity getRequirementApplys(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                          @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                          @RequestParam(value = "requirementId", required = true) Integer requirementId) {
@@ -46,6 +46,32 @@ public class LyjRequirementApplyController {
 
         //判断是否需要根据需求类型ID进行查询
         PageInfo pageInfo = new PageInfo(lyjRequirementApplyService.getRequirementApplys(requirementId));
+        return new ResponseEntity(pageInfo, HttpStatus.OK);
+
+    }
+
+    @ApiOperation(value = "根据参数(搜索内容,创建人ID，需求的状态)进行查找")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),
+            @ApiImplicitParam(paramType = "query", name = "userId", dataType = "Integer", value = "用户ID", required = false),
+            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求状态", required = false)
+    })
+    @GetMapping("/Params")
+    public ResponseEntity getRequirementByParams(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                                 @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                                 @RequestParam(value = "searchText", required = false) String searchText,
+                                                 @RequestParam(value = "userId", required = false) Integer userId,
+                                                 @RequestParam(value = "status", required = false) Integer status){
+
+        pageNo = pageNo == null ? 1 : pageNo;
+        pageSize = pageSize == null ? 10 : pageSize;
+
+        PageHelper.startPage(pageNo, pageSize);
+
+        //判断是否需要根据需求类型ID进行查询
+        PageInfo pageInfo = new PageInfo(lyjRequirementApplyService.getRequirementByParams(searchText,userId,status));
         return new ResponseEntity(pageInfo, HttpStatus.OK);
 
     }

@@ -31,7 +31,7 @@ public class LyjRequirementController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
-            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字(模型编码/模型名称/模型英文名称/服务ID)", required = false),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),
             @ApiImplicitParam(paramType = "query", name = "typeId", dataType = "Integer", value = "需求类型ID", required = false)
     })
     @GetMapping()
@@ -49,6 +49,20 @@ public class LyjRequirementController {
         PageInfo pageInfo = new PageInfo(lyjRequirementService.getRequirements(searchText,typeId));
         return new ResponseEntity(pageInfo, HttpStatus.OK);
 
+    }
+
+    @ApiOperation(value = "根据需求ID查询详情")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需求ID", required = true),
+    })
+    @GetMapping("/{requirementId}")
+    public ResponseEntity getRequirementById(@PathVariable("requirementId") Integer requirementId) {
+        try{
+            LyjRequirement lyjRequirement=lyjRequirementService.getRequirementById(requirementId);
+            return new ResponseEntity(lyjRequirement,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @ApiOperation(value = "新增需求")

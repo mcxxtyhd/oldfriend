@@ -102,7 +102,93 @@
     <include refid="Base_Column_List"/>
     from lyj_requirement_apply
     <if test="lyjRequirementId!=null and lyjRequirementId!=0 ">
-      where lyj_requirement_applyrequirementid= #{pattern}
+      where lyj_requirement_applyrequirementid= #{lyjRequirementId,jdbcType=DECIMAL}
     </if>
   </select>
+
+  <!--根据搜索内容进行查找数据-->
+  <select id="getLyjRequirements" resultMap="BaseResultMap">
+
+    <bind name="pattern" value="'%' + searchText + '%'"/>
+    select
+    <include refid="Base_Column_List"/>
+    from lyj_requirement
+    <where>
+      <if test="searchText!=null and searchText!='' ">
+        (
+        lyj_requirement_name like #{pattern}
+        or lyj_requirement_description like #{pattern}
+        or lyj_requirement_city like #{pattern}
+        or lyj_requirement_area like #{pattern}
+        or lyj_requirement_street like #{pattern}
+        or lyj_requirement_rawaddress like #{pattern}
+        )
+      </if>
+    </where>
+    order by lyj_requirement_id
+
+  </select>
+
+  <!--根据参数(搜索内容,创建人ID，需求的状态)进行查找-->
+  <select id="getRequirementByParams"  resultType="com.feng.oldfriend.entity.LyjRequirementApplyField">
+      <bind name="pattern" value="'%' + searchText + '%'"/>
+    SELECT
+        lyj_requirement_applyid,
+        lyj_user_id,
+        lyj_volunteer_id,
+        lyj_requirement_applystate,
+        lyj_requirement_applycomment,
+        lyj_requirement_applystar,
+        lyj_requirement_applyrequirementid,
+        lyj_requirement_applyduration,
+        lyj_requirement_id,
+        lyj_requirement_name,
+        lyj_requirement_description,
+        lyj_requirement_createuser,
+        lyj_requirement_applyuser,
+        lyj_requirement_isvolunteer,
+        lyj_requirement_city,
+        lyj_requirement_area,
+        lyj_requirement_street,
+        lyj_requirement_createdatetime,
+        lyj_requirement_begindatetime,
+        lyj_requirement_enddatetime,
+        lyj_requirement_rawaddress,
+        lyj_requirement_maplocation,
+        lyj_requirement_reward,
+        lyj_requirement_volunteerperfer
+        FROM
+        lyj_requirement_apply LEFT JOIN
+        lyj_requirement on
+        lyj_requirement_applyid = lyj_requirement_id
+
+      <where>
+          <if test="searchText!=null and searchText!='' ">
+              lyj_requirement_name like #{pattern}
+              or lyj_requirement_description like #{pattern}
+              or lyj_requirement_city like #{pattern}
+              or lyj_requirement_area like #{pattern}
+              or lyj_requirement_street like #{pattern}
+              or lyj_requirement_rawaddress like #{pattern}
+          </if>
+
+          <if test="userId!=null and userId!=0 ">
+
+              <if test="searchText!=null and searchText!='' ">
+                  and
+              </if>
+              lyj_requirement_createuser = #{userId,jdbcType=DECIMAL}
+          </if>
+
+          <if test="status!=null and status!=0 ">
+
+              <if test="(userId!=null and userId!=0) or (searchText!=null and searchText!='')">
+                  and
+              </if>
+              lyj_requirement_applystate = #{status,jdbcType=DECIMAL}
+          </if>
+      </where>
+
+  </select>
+
 </mapper>

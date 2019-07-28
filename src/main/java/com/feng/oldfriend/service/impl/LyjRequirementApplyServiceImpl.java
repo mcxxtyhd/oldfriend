@@ -1,7 +1,9 @@
 package com.feng.oldfriend.service.impl;
 
 import com.feng.oldfriend.dao.LyjRequirementApplyMapper;
+import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementApply;
+import com.feng.oldfriend.entity.LyjRequirementApplyField;
 import com.feng.oldfriend.enums.ApplyStatus;
 import com.feng.oldfriend.service.LyjRequirementApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,16 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
     @Override
     public List<LyjRequirementApply> getRequirementApplys(Integer requirementId) {
         return lyjRequirementApplyMapper.selectByRequirementId(requirementId);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/21 11:05
+     * description: 根据参数(搜索内容,创建人ID，需求的状态)进行查找
+     */
+    @Override
+    public List<LyjRequirementApplyField> getRequirementByParams(String searchText, Integer userId, Integer status) {
+        return lyjRequirementApplyMapper.getRequirementByParams(searchText,userId,status);
     }
 
     @Override

@@ -19,6 +19,8 @@
     <result column="lyj_user_workplace" property="lyjUserWorkplace" jdbcType="VARCHAR" />
     <result column="lyj_user_creditpositive" property="lyjUserCreditpositive" jdbcType="VARCHAR" />
     <result column="lyj_user_creditnegative" property="lyjUserCreditnegative" jdbcType="VARCHAR" />
+    <result column="lyj_user_rewards" property="lyjUserRewards" jdbcType="INTEGER" />
+
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     <!--
@@ -37,12 +39,12 @@
       lyj_user_gender, lyj_user_location, lyj_user_age, 
       lyj_user_country, lyj_user_creditid, lyj_user_phone, 
       lyj_user_livingplace, lyj_user_workplace, lyj_user_creditpositive, 
-      lyj_user_creditnegative)
+      lyj_user_creditnegative,lyj_user_rewards)
     values (#{lyjUserId,jdbcType=INTEGER}, #{lyjUserOpenid,jdbcType=VARCHAR}, #{lyjUserName,jdbcType=VARCHAR}, 
       #{lyjUserGender,jdbcType=INTEGER}, #{lyjUserLocation,jdbcType=VARCHAR}, #{lyjUserAge,jdbcType=INTEGER}, 
       #{lyjUserCountry,jdbcType=VARCHAR}, #{lyjUserCreditid,jdbcType=VARCHAR}, #{lyjUserPhone,jdbcType=VARCHAR}, 
       #{lyjUserLivingplace,jdbcType=VARCHAR}, #{lyjUserWorkplace,jdbcType=VARCHAR}, #{lyjUserCreditpositive,jdbcType=VARCHAR}, 
-      #{lyjUserCreditnegative,jdbcType=VARCHAR})
+      #{lyjUserCreditnegative,jdbcType=VARCHAR},#{lyjUserRewards,jdbcType=INTEGER})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.feng.oldfriend.entity.LyjUser" >
     <!--
@@ -61,7 +63,8 @@
       lyj_user_livingplace = #{lyjUserLivingplace,jdbcType=VARCHAR},
       lyj_user_workplace = #{lyjUserWorkplace,jdbcType=VARCHAR},
       lyj_user_creditpositive = #{lyjUserCreditpositive,jdbcType=VARCHAR},
-      lyj_user_creditnegative = #{lyjUserCreditnegative,jdbcType=VARCHAR}
+      lyj_user_creditnegative = #{lyjUserCreditnegative,jdbcType=VARCHAR},
+      lyj_user_rewards = #{lyjUserRewards,jdbcType=INTEGER}
     where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -71,7 +74,7 @@
     -->
     select lyj_user_id, lyj_user_openid, lyj_user_name, lyj_user_gender, lyj_user_location, 
     lyj_user_age, lyj_user_country, lyj_user_creditid, lyj_user_phone, lyj_user_livingplace, 
-    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative
+    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative,lyj_user_rewards
     from lyj_user
     where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </select>
@@ -82,7 +85,24 @@
     -->
     select lyj_user_id, lyj_user_openid, lyj_user_name, lyj_user_gender, lyj_user_location, 
     lyj_user_age, lyj_user_country, lyj_user_creditid, lyj_user_phone, lyj_user_livingplace, 
-    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative
+    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative,lyj_user_rewards
     from lyj_user
+  </select>
+
+  <!--根据搜索条件对所有的用户进行查找-->
+  <select id="getUsers" resultMap="BaseResultMap" >
+    <bind name="pattern" value="'%' + searchText + '%'"/>
+    select lyj_user_id, lyj_user_openid, lyj_user_name, lyj_user_gender, lyj_user_location,
+    lyj_user_age, lyj_user_country, lyj_user_creditid, lyj_user_phone, lyj_user_livingplace,
+    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative,lyj_user_rewards
+    from lyj_user
+    <if test="searchText!=null and searchText!='' ">
+      where lyj_user_name like #{pattern}
+      or lyj_user_location like #{pattern}
+      or lyj_user_country like #{pattern}
+      or lyj_user_phone like #{pattern}
+      or lyj_user_livingplace like #{pattern}
+      or lyj_user_workplace like #{pattern}
+    </if>
   </select>
 </mapper>

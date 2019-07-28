@@ -36,6 +36,16 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
         }
     }
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/28 14:46
+     * description: 根据需求ID查找到详情
+     */
+    @Override
+    public LyjRequirement getRequirementById(Integer requirementId) {
+        return lyjRequirementMapper.selectByPrimaryKey(requirementId);
+    }
+
     @Override
     @Transactional
     public void saveRequirement(Integer typeId,LyjRequirement lyjRequirement) {

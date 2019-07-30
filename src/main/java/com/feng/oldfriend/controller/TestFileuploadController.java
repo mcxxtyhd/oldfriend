@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @RestController
@@ -45,8 +46,13 @@ public class TestFileuploadController {
         System.out.println(fileDir.getAbsolutePath());
 
         try {
+
+            String fileUUIDName= UUID.randomUUID()+suffixName;
             // 构建真实的文件路径
-            File newFile = new File(fileDir.getAbsolutePath() + File.separator + fileName);
+            String filePath=fileDir.getAbsolutePath() + File.separator + fileUUIDName;
+            System.out.println("************************");
+            System.out.println(filePath);
+            File newFile = new File(filePath);
 
             file.transferTo(newFile);
             return "上传成功";

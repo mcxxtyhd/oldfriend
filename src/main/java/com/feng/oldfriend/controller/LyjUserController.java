@@ -2,6 +2,8 @@ package com.feng.oldfriend.controller;
 
 import com.feng.oldfriend.dao.LyjUserMapper;
 import com.feng.oldfriend.entity.LyjUser;
+import com.feng.oldfriend.service.LyjUserService;
+import com.feng.oldfriend.service.LyjUtilService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,7 +29,10 @@ import java.util.List;
 public class LyjUserController {
 
     @Autowired
-    private LyjUserMapper lyjUserMapper;
+    private LyjUserService lyjUserService;
+
+    @Autowired
+    private LyjUtilService lyjUtilService;
 
     @ApiOperation(value = "根据搜索内容查询所有的用户")
     @ApiImplicitParams(value = {
@@ -45,7 +51,7 @@ public class LyjUserController {
             PageHelper.startPage(pageNo, pageSize);
 
             //判断是否需要根据需求类型ID进行查询
-            PageInfo pageInfo = new PageInfo(lyjUserMapper.getUsers(searchText));
+            PageInfo pageInfo = new PageInfo(lyjUserService.getUsers(searchText));
 
             return new ResponseEntity(pageInfo, HttpStatus.OK);
         }catch (Exception e){
@@ -60,8 +66,36 @@ public class LyjUserController {
     @GetMapping("/{userId}")
     public ResponseEntity getUserById(@PathVariable("userId") Integer userId) {
         try{
-            LyjUser lyjUser=lyjUserMapper.selectByPrimaryKey(userId);
+            LyjUser lyjUser=lyjUserService.getUserById(userId);
             return new ResponseEntity(lyjUser, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ApiOperation(value = "根据用户ID上传身份证的正反面")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "userId", dataType = "Integer", value = "用户ID", required = true),
+            @ApiImplicitParam(paramType = "body", name = "file", dataType = "file", value = "上传的图片", required = true),
+            @ApiImplicitParam(paramType = "body", name = "imgType", dataType = "Integer", value = "图片类型(1/身份证正面 2/身份证反面)", required = true)
+    })
+    @PostMapping("/UplaodUserInfo")
+    public ResponseEntity uploadUserCreditById(@RequestParam("userId") Integer userId,
+                                               @RequestParam("img") MultipartFile file,
+                                               @RequestParam("imgType") Integer imgType) {
+        try{
+            //获得上传文件的地址
+            String filePath= lyjUtilService.saveFile(file);
+            LyjUser lyjUser=lyjUserService.getUserById(userId);
+
+            //根据传过来的图片类型 来选择图片保存的地址
+            if(imgType==1){
+                lyjUser.setLyjUserCreditpositive(filePath);
+            }else{
+                lyjUser.setLyjUserCreditnegative(filePath);
+            }
+            lyjUserService.updateUser(lyjUser);
+            return new ResponseEntity("上传成功", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -80,7 +114,7 @@ public class LyjUserController {
     @PostMapping()
     public ResponseEntity addUser(@RequestBody LyjUser lyjUser){
         try{
-            lyjUserMapper.insert(lyjUser);
+            lyjUserService.saveUser(lyjUser);
             return new ResponseEntity(HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,7 +133,7 @@ public class LyjUserController {
     @PutMapping()
     public ResponseEntity updateUser(@RequestBody LyjUser lyjUser) {
 
-        lyjUserMapper.updateByPrimaryKey(lyjUser);
+        lyjUserService.updateUser(lyjUser);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -115,7 +149,7 @@ public class LyjUserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity removeUser(@PathVariable("userId") Integer userId) {
         try{
-            lyjUserMapper.deleteByPrimaryKey(userId);
+            lyjUserService.removeUser(userId);
             return new ResponseEntity(HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);

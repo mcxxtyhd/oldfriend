@@ -117,6 +117,7 @@ public class LyjUserController {
             lyjUserService.saveUser(lyjUser);
             return new ResponseEntity(HttpStatus.OK);
         }catch (Exception e){
+            e.printStackTrace();
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

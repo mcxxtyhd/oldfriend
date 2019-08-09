@@ -55,4 +55,15 @@
     select lyj_requirement_typeid, lyj_requirement_typename, lyj_requirement_typeparentid
     from lyj_requirement_type
   </select>
+
+  <select id="getSonRequirementTypes" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select lyj_requirement_typeid, lyj_requirement_typename, lyj_requirement_typeparentid
+    from lyj_requirement_type
+    <if test="parentID!=null and parentID!=0">
+      where lyj_requirement_typeparentid=#{parentID,jdbcType=INTEGER}
+    </if>
+    <if test="parentID==null or parentID==0">
+      where lyj_requirement_typeparentid is null
+    </if>
+  </select>
 </mapper>

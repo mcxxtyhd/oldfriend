@@ -56,4 +56,14 @@ public class LyjRquirementTypeServiceImpl implements LyjRquirementTypeService {
         //2、再删除需求类型
         lyjRequirementTypeMapper.deleteByPrimaryKey(id);
     }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/9 21:11
+     * description: 根据父ID查询所有的子需求类型
+     */
+    @Override
+    public List<LyjRequirementType> getSonRequirementTypes(Integer parentID) {
+        return lyjRequirementTypeMapper.getSonRequirementTypes(parentID);
+    }
 }

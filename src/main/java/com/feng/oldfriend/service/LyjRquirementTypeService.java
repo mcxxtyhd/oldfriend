@@ -29,4 +29,10 @@ public interface LyjRquirementTypeService {
      */
     void removeRquirementType(Integer id);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/9 21:11
+     * description: 根据父ID查询所有的子需求类型
+     */
+    List<LyjRequirementType> getSonRequirementTypes(Integer parentID);
 }

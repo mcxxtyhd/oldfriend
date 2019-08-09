@@ -31,7 +31,7 @@ public class LyjUtilController {
 
     @ApiOperation(value = "上传图片返回图片地址")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "body", name = "file", dataType = "file", value = "上传的图片", required = true)
+            @ApiImplicitParam(paramType = "body", name = "img", dataType = "file", value = "上传的图片", required = true)
     })
     @PostMapping("/UploadImg")
     public ResponseEntity uploadImg(@RequestParam("img") MultipartFile file) {
@@ -40,6 +40,7 @@ public class LyjUtilController {
             String filePath= lyjUtilService.saveFile(file);
             return new ResponseEntity(filePath, HttpStatus.OK);
         }catch (Exception e){
+            e.printStackTrace();
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

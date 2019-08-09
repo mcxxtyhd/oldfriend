@@ -20,6 +20,7 @@
     <result column="lyj_user_creditpositive" property="lyjUserCreditpositive" jdbcType="VARCHAR" />
     <result column="lyj_user_creditnegative" property="lyjUserCreditnegative" jdbcType="VARCHAR" />
     <result column="lyj_user_rewards" property="lyjUserRewards" jdbcType="INTEGER" />
+    <result column="lyj_user_birthday" property="lyjUserBirthday" jdbcType="TIMESTAMP" />
 
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
@@ -39,12 +40,12 @@
       lyj_user_gender, lyj_user_location, lyj_user_age, 
       lyj_user_country, lyj_user_creditid, lyj_user_phone, 
       lyj_user_livingplace, lyj_user_workplace, lyj_user_creditpositive, 
-      lyj_user_creditnegative,lyj_user_rewards)
+      lyj_user_creditnegative,lyj_user_rewards,lyj_user_birthday)
     values (#{lyjUserId,jdbcType=INTEGER}, #{lyjUserOpenid,jdbcType=VARCHAR}, #{lyjUserName,jdbcType=VARCHAR}, 
       #{lyjUserGender,jdbcType=INTEGER}, #{lyjUserLocation,jdbcType=VARCHAR}, #{lyjUserAge,jdbcType=INTEGER}, 
       #{lyjUserCountry,jdbcType=VARCHAR}, #{lyjUserCreditid,jdbcType=VARCHAR}, #{lyjUserPhone,jdbcType=VARCHAR}, 
       #{lyjUserLivingplace,jdbcType=VARCHAR}, #{lyjUserWorkplace,jdbcType=VARCHAR}, #{lyjUserCreditpositive,jdbcType=VARCHAR}, 
-      #{lyjUserCreditnegative,jdbcType=VARCHAR},#{lyjUserRewards,jdbcType=INTEGER})
+      #{lyjUserCreditnegative,jdbcType=VARCHAR},#{lyjUserRewards,jdbcType=INTEGER},#{lyjUserBirthday,jdbcType=DATE})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.feng.oldfriend.entity.LyjUser" >
     <!--
@@ -64,8 +65,9 @@
       lyj_user_workplace = #{lyjUserWorkplace,jdbcType=VARCHAR},
       lyj_user_creditpositive = #{lyjUserCreditpositive,jdbcType=VARCHAR},
       lyj_user_creditnegative = #{lyjUserCreditnegative,jdbcType=VARCHAR},
-      lyj_user_rewards = #{lyjUserRewards,jdbcType=INTEGER}
-    where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
+      lyj_user_rewards = #{lyjUserRewards,jdbcType=INTEGER},
+      lyj_user_birthday = #{lyjUserBirthday,jdbcType=INTEGER}
+    where lyj_user_id = #{lyjUserId,jdbcType=DATE}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     <!--
@@ -74,7 +76,8 @@
     -->
     select lyj_user_id, lyj_user_openid, lyj_user_name, lyj_user_gender, lyj_user_location, 
     lyj_user_age, lyj_user_country, lyj_user_creditid, lyj_user_phone, lyj_user_livingplace, 
-    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative,lyj_user_rewards
+    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative,lyj_user_rewards,
+    lyj_user_birthday
     from lyj_user
     where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </select>
@@ -100,7 +103,8 @@
     a.lyj_user_creditpositive,
     a.lyj_user_creditnegative,
     a.lyj_user_rewards ,
-    b.lyj_volunteer_id
+    b.lyj_volunteer_id,
+    a.lyj_user_birthday
     FROM
     lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
@@ -134,7 +138,8 @@
     a.lyj_user_creditpositive as lyjUserCreditpositive,
     a.lyj_user_creditnegative as lyjUserCreditnegative,
     a.lyj_user_rewards as lyjUserRewards,
-    b.lyj_volunteer_id as lyjVolunteerId
+    b.lyj_volunteer_id as lyjVolunteerId,
+    b.lyj_user_birthday as lyjUserBirthday
     from lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
     <if test="searchText!=null and searchText!=''">

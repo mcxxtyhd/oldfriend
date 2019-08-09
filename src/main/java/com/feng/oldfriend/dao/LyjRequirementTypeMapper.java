@@ -2,6 +2,7 @@ package com.feng.oldfriend.dao;
 
 import com.feng.oldfriend.entity.LyjRequirementType;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -46,4 +47,11 @@ public interface LyjRequirementTypeMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(LyjRequirementType record);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/9 21:36
+     * description: 根据父ID找到所有的子需求类型
+     */
+    List<LyjRequirementType> getSonRequirementTypes(@Param("parentID") Integer parentID);
 }

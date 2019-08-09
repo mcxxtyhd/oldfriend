@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author ：yangchenxiao
  * @date ：Created in 2019/7/21 10:23
@@ -43,6 +45,23 @@ public class LyjRquirementTypeController {
 
         PageInfo pageInfo = new PageInfo(lyjRquirementTypeService.getLyjRequirementTypes());
         return new ResponseEntity(pageInfo, HttpStatus.OK);
+
+    }
+
+    @ApiOperation(value = "根据父ID查询需求类型")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "parentID", dataType = "Integer", value = "父ID")})
+    @GetMapping("/Sons")
+    public ResponseEntity getRequirement(@RequestParam(value = "parentId", required = false) Integer parentId)
+    {
+//        try{
+            List<LyjRequirementType> lyjRequirementTypes = lyjRquirementTypeService.getSonRequirementTypes(parentId);
+            return new ResponseEntity(lyjRequirementTypes, HttpStatus.OK);
+//        }
+//        catch (Exception e){
+//            System.out.println(e.toString());
+//            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
 
     }
 

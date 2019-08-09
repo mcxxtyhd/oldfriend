@@ -1,6 +1,7 @@
 package com.feng.oldfriend.controller;
 
 import com.feng.oldfriend.entity.LyjAdvertisement;
+import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.service.LyjAdvertisementService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -12,10 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,4 +48,59 @@ public class LyjAdvertisementController {
 
     }
 
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/4 11:23
+     * description: 新增广告
+     */
+    @ApiOperation(value = "新增广告")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "新增的广告", required = true)
+    })
+    @PostMapping()
+    public ResponseEntity addAdvertisement(@RequestBody LyjAdvertisement lyjAdvertisement){
+        try{
+            lyjAdvertisementService.saveAdvertisement(lyjAdvertisement);
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/4 11:23
+     * description: 更新广告信息
+     */
+    @ApiOperation(value = "更新广告信息")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "更新的广告信息", required = true)
+    })
+    @PutMapping()
+    public ResponseEntity updateAdvertisement(@RequestBody LyjAdvertisement lyjAdvertisement) {
+
+        lyjAdvertisementService.updateAdvertisement(lyjAdvertisement);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/4 11:23
+     * description: 删除广告
+     */
+    @ApiOperation(value = "删除广告")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "lyjAdvertisementId", dataType = "Integer", value = "需要删除的广告ID", required = true)
+    })
+    @DeleteMapping("/{lyjAdvertisementId}")
+    public ResponseEntity removeAdvertisement(@PathVariable("lyjAdvertisementId") Integer lyjAdvertisementId) {
+        try{
+            lyjAdvertisementService.removeAdvertisement(lyjAdvertisementId);
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 }

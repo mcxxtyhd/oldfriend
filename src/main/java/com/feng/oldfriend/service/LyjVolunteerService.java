@@ -10,6 +10,13 @@ public interface LyjVolunteerService {
 
     /**
      * create by: yangchenxiao
+     * create time: 2019/8/5 21:25
+     * description: 获得所有的义工
+     */
+    List<LyjVolunteer> getAllVolunteer();
+
+    /**
+     * create by: yangchenxiao
      * create time: 2019/7/29 21:50
      * description: 根据用户ID查找到志愿者ID
      */

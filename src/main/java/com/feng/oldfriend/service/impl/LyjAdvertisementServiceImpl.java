@@ -23,4 +23,34 @@ public class LyjAdvertisementServiceImpl implements LyjAdvertisementService {
     public List<LyjAdvertisement> getAdvertisementsByPagename(String pageName) {
         return lyjAdvertisementMapper.selectAdvertisementsByPagename(pageName);
     }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/4 11:28
+     * description: 新增广告
+     */
+    @Override
+    public void saveAdvertisement(LyjAdvertisement lyjAdvertisement) {
+        lyjAdvertisementMapper.insert(lyjAdvertisement);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/4 11:28
+     * description: 更新广告信息
+     */
+    @Override
+    public void updateAdvertisement(LyjAdvertisement lyjAdvertisement) {
+        lyjAdvertisementMapper.updateByPrimaryKey(lyjAdvertisement);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/4 11:29
+     * description: 删除广告信息
+     */
+    @Override
+    public void removeAdvertisement(Integer id) {
+        lyjAdvertisementMapper.deleteByPrimaryKey(id);
+    }
 }

@@ -25,7 +25,7 @@ public interface LyjRquirementTypeService {
     /**
      * create by: yangchenxiao
      * create time: 2019/7/24 20:48
-     * description: 新增需求类型
+     * description: 删除需求类型
      */
     void removeRquirementType(Integer id);
 

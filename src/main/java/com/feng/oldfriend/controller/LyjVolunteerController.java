@@ -26,6 +26,18 @@ public class LyjVolunteerController {
     @Autowired
     private LyjVolunteerService lyjVolunteerService;
 
+    @ApiOperation(value = "查询所有的义工")
+    @GetMapping()
+    public ResponseEntity getVolunteerByUserId() {
+        try{
+            List<LyjVolunteer> lyjVolunteers=lyjVolunteerService.getAllVolunteer();
+            return new ResponseEntity(lyjVolunteers, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @ApiOperation(value = "根据用户ID查询义工ID")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "userId", dataType = "Integer", value = "用户ID", required = true),
@@ -40,7 +52,7 @@ public class LyjVolunteerController {
         }
     }
 
-    @ApiOperation(value = "根据义工ID查询用户")
+    @ApiOperation(value = "根据义工ID查询用户ID")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "volunteerId", dataType = "Integer", value = "义工ID", required = true),
     })

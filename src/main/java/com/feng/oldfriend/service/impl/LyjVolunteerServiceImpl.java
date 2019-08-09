@@ -16,6 +16,11 @@ public class LyjVolunteerServiceImpl implements LyjVolunteerService {
 
 
     @Override
+    public List<LyjVolunteer> getAllVolunteer() {
+        return lyjVolunteerMapper.selectAll();
+    }
+
+    @Override
     public List<LyjVolunteer> getVolunteerByUserId(Integer userId) {
         return lyjVolunteerMapper.getVolunteerByUserId(userId);
     }

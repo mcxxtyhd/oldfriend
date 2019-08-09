@@ -38,12 +38,12 @@ public class LyjUserController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
-            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "搜索内容", required = true),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "搜索内容", required = false),
     })
     @GetMapping()
     public ResponseEntity getUserBySearch(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                           @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                          @RequestParam("searchText") String searchText) {
+                                          @RequestParam(value = "searchText", required = false) String searchText){
         try{
             pageNo = pageNo == null ? 1 : pageNo;
             pageSize = pageSize == null ? 10 : pageSize;
@@ -73,33 +73,33 @@ public class LyjUserController {
         }
     }
 
-    @ApiOperation(value = "根据用户ID上传身份证的正反面")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "userId", dataType = "Integer", value = "用户ID", required = true),
-            @ApiImplicitParam(paramType = "body", name = "file", dataType = "file", value = "上传的图片", required = true),
-            @ApiImplicitParam(paramType = "body", name = "imgType", dataType = "Integer", value = "图片类型(1/身份证正面 2/身份证反面)", required = true)
-    })
-    @PostMapping("/UplaodUserInfo")
-    public ResponseEntity uploadUserCreditById(@RequestParam("userId") Integer userId,
-                                               @RequestParam("img") MultipartFile file,
-                                               @RequestParam("imgType") Integer imgType) {
-        try{
-            //获得上传文件的地址
-            String filePath= lyjUtilService.saveFile(file);
-            LyjUser lyjUser=lyjUserService.getUserById(userId);
-
-            //根据传过来的图片类型 来选择图片保存的地址
-            if(imgType==1){
-                lyjUser.setLyjUserCreditpositive(filePath);
-            }else{
-                lyjUser.setLyjUserCreditnegative(filePath);
-            }
-            lyjUserService.updateUser(lyjUser);
-            return new ResponseEntity("上传成功", HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @ApiOperation(value = "根据用户ID上传身份证的正反面")
+//    @ApiImplicitParams(value = {
+//            @ApiImplicitParam(paramType = "query", name = "userId", dataType = "Integer", value = "用户ID", required = true),
+//            @ApiImplicitParam(paramType = "body", name = "file", dataType = "file", value = "上传的图片", required = true),
+//            @ApiImplicitParam(paramType = "body", name = "imgType", dataType = "Integer", value = "图片类型(1/身份证正面 2/身份证反面)", required = true)
+//    })
+//    @PostMapping("/UplaodUserInfo")
+//    public ResponseEntity uploadUserCreditById(@RequestParam("userId") Integer userId,
+//                                               @RequestParam("img") MultipartFile file,
+//                                               @RequestParam("imgType") Integer imgType) {
+//        try{
+//            //获得上传文件的地址
+//            String filePath= lyjUtilService.saveFile(file);
+//            LyjUser lyjUser=lyjUserService.getUserById(userId);
+//
+//            //根据传过来的图片类型 来选择图片保存的地址
+//            if(imgType==1){
+//                lyjUser.setLyjUserCreditpositive(filePath);
+//            }else{
+//                lyjUser.setLyjUserCreditnegative(filePath);
+//            }
+//            lyjUserService.updateUser(lyjUser);
+//            return new ResponseEntity("上传成功", HttpStatus.OK);
+//        }catch (Exception e){
+//            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 
     /**

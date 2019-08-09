@@ -1,6 +1,6 @@
 
 server:
-  port: 8080
+  port: 8888
 
 
 spring:
@@ -9,6 +9,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1874
+#    username: sa
+#    password: 123
+
 
 
 mybatis:
@@ -17,3 +20,7 @@ mybatis:
 
 
 debug: false
+
+#logging:
+#  level:
+#    com.feng.oldfriend.dao: DEBUG

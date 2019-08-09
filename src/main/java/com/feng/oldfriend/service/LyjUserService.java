@@ -12,7 +12,7 @@ public interface LyjUserService {
      * create time: 2019/7/28 14:58
      * description: 根据搜索内容找到对应的信息
      */
-    List<LyjUser> getUsers(String searchText);
+    List<LyjUser> getUsers(String searchText) ;
 
     /**
      * create by: yangchenxiao

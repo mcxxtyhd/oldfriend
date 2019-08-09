@@ -109,6 +109,16 @@ public class LyjUser implements Serializable {
 
     private Integer lyjUserRewards;
 
+    private Integer lyjVolunteerId;
+
+    public Integer getLyjVolunteerId() {
+        return lyjVolunteerId;
+    }
+
+    public void setLyjVolunteerId(Integer lyjVolunteerId) {
+        this.lyjVolunteerId = lyjVolunteerId;
+    }
+
     public Integer getLyjUserRewards() {
         return lyjUserRewards;
     }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false" scan="true" scanPeriod="30 minutes">
 
+
+
+
     <!-- ===================================   D:/javaLog/   ================================================= -->
     <property name="logDir" value="log/" />
     <!-- 打印到控制台 -->
@@ -86,6 +89,8 @@
         <appender-ref ref="errorlog" />
     </appender>
 
+
+    <logger name="com.feng.oldfriend.dao" level="DEBUG"></logger>
 
     <root level="info">
         <appender-ref ref="stdout" />

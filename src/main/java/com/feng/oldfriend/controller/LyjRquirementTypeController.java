@@ -27,7 +27,7 @@ public class LyjRquirementTypeController {
     @Autowired
     private LyjRquirementTypeService lyjRquirementTypeService;
 
-    @ApiOperation(value = "查询需求")
+    @ApiOperation(value = "查询需求类型")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10")})

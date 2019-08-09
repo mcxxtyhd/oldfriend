@@ -14,6 +14,8 @@
     <name>oldfriend</name>
     <description>老友集</description>
 
+    <!--<packaging>war</packaging>-->
+
     <properties>
         <java.version>1.8</java.version>
         <swagger.version>2.6.1</swagger.version>
@@ -21,6 +23,15 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <!-- 只在编译和测试的时候用 -->
+            <scope>provided</scope>
+        </dependency>
+
 
         <!-- springboot -->
         <dependency>
@@ -30,6 +41,8 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+
+
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -39,6 +36,22 @@ public class LyjUtilController {
             //获得上传文件的地址
             String filePath= lyjUtilService.saveFile(file);
             return new ResponseEntity(filePath, HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ApiOperation(value = "调用短信验证码")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "phone", dataType = "String", value = "手机号码", required = true)
+    })
+    @GetMapping("/RegisterCheck")
+    public ResponseEntity registerCheck(@RequestParam("phone") String phoneNumber) {
+        try{
+            //获得上传文件的地址
+            String checkCode= lyjUtilService.registerCheck(phoneNumber);
+            return new ResponseEntity(checkCode, HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);

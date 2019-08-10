@@ -1,6 +1,7 @@
 package com.feng.oldfriend.controller;
 
 import com.feng.oldfriend.entity.LyjRequirement;
+import com.feng.oldfriend.entity.LyjRequirementType;
 import com.feng.oldfriend.service.LyjRequirementService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author ：yangchenxiao
@@ -31,24 +34,43 @@ public class LyjRequirementController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
-            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = true),
             @ApiImplicitParam(paramType = "query", name = "typeId", dataType = "Integer", value = "需求类型ID", required = false)
     })
     @GetMapping()
-    public ResponseEntity getRequirement(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                            @RequestParam(value = "searchText", required = false) String searchText,
+    public ResponseEntity getRequirement(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                            @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                            @RequestParam(value = "searchText", required = true) String searchText,
                                             @RequestParam(value = "typeId", required = false) Integer typeId) {
+        try{
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? 10 : pageSize;
 
-        pageNo = pageNo == null ? 1 : pageNo;
-        pageSize = pageSize == null ? 10 : pageSize;
+            PageHelper.startPage(pageNo, pageSize);
 
-        PageHelper.startPage(pageNo, pageSize);
+            //判断是否需要根据需求类型ID进行查询
+            PageInfo pageInfo = new PageInfo(lyjRequirementService.getRequirements(searchText,typeId));
+            return new ResponseEntity(pageInfo, HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        //判断是否需要根据需求类型ID进行查询
-        PageInfo pageInfo = new PageInfo(lyjRequirementService.getRequirements(searchText,typeId));
-        return new ResponseEntity(pageInfo, HttpStatus.OK);
+    }
 
+    @ApiOperation(value = "根据需求ID查询需求类型")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需求ID", required = true),
+    })
+    @GetMapping("/type/{requirementId}")
+    public ResponseEntity getTypesById(@PathVariable("requirementId") Integer requirementId) {
+        try{
+            List<LyjRequirementType> types=lyjRequirementService.getTypesById(requirementId);
+            return new ResponseEntity(types,HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @ApiOperation(value = "根据需求ID查询详情")

@@ -1,6 +1,8 @@
 package com.feng.oldfriend.service;
 
 import com.feng.oldfriend.entity.LyjRequirement;
+import com.feng.oldfriend.entity.LyjRequirementType;
+import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
 
 import java.util.List;
 
@@ -19,6 +21,13 @@ public interface LyjRequirementService {
      * description: 根据需求ID查找到详情
      */
     LyjRequirement getRequirementById(Integer requirementId);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/10 14:55
+     * description: 根据需求ID查询到所有的需求类型
+     */
+    List<LyjRequirementType> getTypesById(Integer requirementId);
 
     void saveRequirement(Integer typeId,LyjRequirement lyjRequirement);
 

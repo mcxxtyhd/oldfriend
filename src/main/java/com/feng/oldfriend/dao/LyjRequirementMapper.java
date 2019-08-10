@@ -1,6 +1,8 @@
 package com.feng.oldfriend.dao;
 
 import com.feng.oldfriend.entity.LyjRequirement;
+import com.feng.oldfriend.entity.LyjRequirementType;
+import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -8,6 +10,13 @@ import java.util.List;
 
 @Mapper
 public interface LyjRequirementMapper {
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/10 14:55
+     * description: 根据需求ID查询到所有的需求类型
+     */
+    List<LyjRequirementType> getTypesById(@Param("requirenmentId") Integer requirenmentId);
 
     /**
      * create by: yangchenxiao

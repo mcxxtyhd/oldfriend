@@ -16,4 +16,6 @@ public interface LyjUtilService {
      */
     String saveFile(MultipartFile file) throws Exception;
 
+    String registerCheck(String phoneNumber) throws Exception;
+
 }

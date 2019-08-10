@@ -3,6 +3,7 @@ package com.feng.oldfriend.service.impl;
 import com.feng.oldfriend.dao.LyjRequirementMapper;
 import com.feng.oldfriend.dao.LyjRequirementtypeRelationMapper;
 import com.feng.oldfriend.entity.LyjRequirement;
+import com.feng.oldfriend.entity.LyjRequirementType;
 import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
 import com.feng.oldfriend.service.LyjRequirementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,16 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
     @Override
     public LyjRequirement getRequirementById(Integer requirementId) {
         return lyjRequirementMapper.selectByPrimaryKey(requirementId);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/10 14:55
+     * description: 根据需求ID查询到所有的需求类型
+     */
+    @Override
+    public List<LyjRequirementType> getTypesById(Integer requirementId) {
+        return lyjRequirementMapper.getTypesById(requirementId);
     }
 
     @Override

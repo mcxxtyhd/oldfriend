@@ -21,7 +21,7 @@
     <result column="lyj_requirement_rawaddress" jdbcType="VARCHAR" property="lyjRequirementRawaddress" />
     <result column="lyj_requirement_maplocation" jdbcType="VARCHAR" property="lyjRequirementMaplocation" />
     <result column="lyj_requirement_reward" jdbcType="INTEGER" property="lyjRequirementReward" />
-      <result column="lyj_requirement_volunteerperfer" jdbcType="INTEGER" property="lyjRequirementVolunteerperfer" />
+    <result column="lyj_requirement_volunteerperfer" jdbcType="INTEGER" property="lyjRequirementVolunteerperfer" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -43,26 +43,82 @@
       lyj_requirement.lyj_requirement_volunteerperfer
   </sql>
 
+    <!--子查询 查询所属的类型-->
+    <resultMap type="com.feng.oldfriend.entity.LyjRequirementVO" id="RequirementAndType">
+        <collection column="lyjRequirementId" property="allTypes" ofType="com.feng.oldfriend.entity.LyjRequirementType"
+                    select="getTypesById" >
+        </collection>
+    </resultMap>
+
+    <!--根据需求ID查询到所有的需求类型-->
+    <select id="getTypesById" resultType="com.feng.oldfriend.entity.LyjRequirementType">
+        SELECT
+        t3.lyj_requirement_typeid as lyjRequirementTypeid,
+        t3.lyj_requirement_typename as lyjRequirementTypename,
+        t3.lyj_requirement_typeparentid as lyjRequirementTypeparentid
+        FROM
+        lyj_requirement t1
+        left join lyj_requirementtype_relation t2 on t1.lyj_requirement_id=t2.lyj_requirement_id
+        left join lyj_requirement_type t3 on t3.lyj_requirement_typeid=t2.lyj_requirement_typeid
+        where t1.lyj_requirement_id=#{requirenmentId}
+    </select>
+
+    <!--根据搜索内容进行查找数据-->
+    <select id="getLyjRequirements" resultMap="RequirementAndType">
+        <bind name="pattern" value="'%' + searchText + '%'"/>
+        SELECT
+        b.lyj_requirement_id as lyjRequirementId,
+        b.lyj_requirement_name as lyjRequirementName,
+        b.lyj_requirement_description as lyjRequirementDescription,
+        b.lyj_requirement_createuser as lyjRequirementCreateuser,
+        b.lyj_requirement_applyuser as lyjRequirementApplyuser,
+        b.lyj_requirement_isvolunteer as lyjRequirementIsvolunteer ,
+        b.lyj_requirement_city as lyjRequirementCity,
+        b.lyj_requirement_area as lyjRequirementArea,
+        b.lyj_requirement_street as lyjRequirementStreet,
+        b.lyj_requirement_createdatetime as lyjRequirementCreatedatetime,
+        b.lyj_requirement_begindatetime as lyjRequirementBegindatetime,
+        b.lyj_requirement_enddatetime as lyjRequirementEnddatetime,
+        b.lyj_requirement_rawaddress as lyjRequirementRawaddress,
+        b.lyj_requirement_maplocation as lyjRequirementMaplocation,
+        b.lyj_requirement_reward as lyjRequirementReward,
+        b.lyj_requirement_volunteerperfer as lyjRequirementVolunteerperfer
+        FROM
+        lyj_requirement b
+        <where>
+        <if test="searchText!=null and searchText!='' ">
+            (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            )
+        </if>
+        </where>
+    </select>
+
   <!--根据搜索内容和需求类型ID进行查找数据-->
-  <select id="getLyjRequirementsByTypeId" resultMap="BaseResultMap">
+  <select id="getLyjRequirementsByTypeId" resultMap="RequirementAndType">
       <bind name="pattern" value="'%' + searchText + '%'"/>
       SELECT
-      b.lyj_requirement_id,
-      b.lyj_requirement_name,
-      b.lyj_requirement_description,
-      b.lyj_requirement_createuser,
-      b.lyj_requirement_applyuser,
-      b.lyj_requirement_isvolunteer,
-      b.lyj_requirement_city,
-      b.lyj_requirement_area,
-      b.lyj_requirement_street,
-      b.lyj_requirement_createdatetime,
-      b.lyj_requirement_begindatetime,
-      b.lyj_requirement_enddatetime,
-      b.lyj_requirement_rawaddress,
-      b.lyj_requirement_maplocation,
-      b.lyj_requirement_reward
-      b.lyj_requirement_volunteerperfer
+      b.lyj_requirement_id as lyjRequirementId,
+      b.lyj_requirement_name as lyjRequirementName,
+      b.lyj_requirement_description as lyjRequirementDescription,
+      b.lyj_requirement_createuser as lyjRequirementCreateuser,
+      b.lyj_requirement_applyuser as lyjRequirementApplyuser,
+      b.lyj_requirement_isvolunteer as lyjRequirementIsvolunteer ,
+      b.lyj_requirement_city as lyjRequirementCity,
+      b.lyj_requirement_area as lyjRequirementArea,
+      b.lyj_requirement_street as lyjRequirementStreet,
+      b.lyj_requirement_createdatetime as lyjRequirementCreatedatetime,
+      b.lyj_requirement_begindatetime as lyjRequirementBegindatetime,
+      b.lyj_requirement_enddatetime as lyjRequirementEnddatetime,
+      b.lyj_requirement_rawaddress as lyjRequirementRawaddress,
+      b.lyj_requirement_maplocation as lyjRequirementMaplocation,
+      b.lyj_requirement_reward as lyjRequirementReward,
+      b.lyj_requirement_volunteerperfer as lyjRequirementVolunteerperfer
       FROM
       lyj_requirementtype_relation a left join
       lyj_requirement b

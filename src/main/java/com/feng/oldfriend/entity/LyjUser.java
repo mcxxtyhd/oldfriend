@@ -5,6 +5,26 @@ import java.util.Date;
 
 public class LyjUser implements Serializable {
 
+    private String lyjUserPassword;
+
+    private String lyjUserUuid;
+
+    public String getLyjUserPassword() {
+        return lyjUserPassword;
+    }
+
+    public void setLyjUserPassword(String lyjUserPassword) {
+        this.lyjUserPassword = lyjUserPassword;
+    }
+
+    public String getLyjUserUuid() {
+        return lyjUserUuid;
+    }
+
+    public void setLyjUserUuid(String lyjUserUuid) {
+        this.lyjUserUuid = lyjUserUuid;
+    }
+
     private Date lyjUserBirthday;
 
     public Date getLyjUserBirthday() {

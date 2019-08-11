@@ -21,7 +21,21 @@ public interface LyjUserService {
      */
     LyjUser getUserById(Integer userId);
 
-    void saveUser(LyjUser user);
+    String saveUser(LyjUser user);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/11 16:40
+     * description: 用户登录
+     */
+    LyjUser loginUser(String phone,String password);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/11 16:49
+     * description: 根据唯一标识找到用户
+     */
+    LyjUser getUserByInfo(String userUUID);
 
     void updateUser(LyjUser user);
 

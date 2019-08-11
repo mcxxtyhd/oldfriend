@@ -22,6 +22,8 @@
     <result column="lyj_requirement_maplocation" jdbcType="VARCHAR" property="lyjRequirementMaplocation" />
     <result column="lyj_requirement_reward" jdbcType="INTEGER" property="lyjRequirementReward" />
     <result column="lyj_requirement_volunteerperfer" jdbcType="INTEGER" property="lyjRequirementVolunteerperfer" />
+    <result column="lyj_requirement_detailadd" jdbcType="VARCHAR" property="lyjRequirementDetailadd" />
+
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -40,12 +42,13 @@
       lyj_requirement.lyj_requirement_rawaddress,
       lyj_requirement.lyj_requirement_maplocation,
       lyj_requirement.lyj_requirement_reward
-      lyj_requirement.lyj_requirement_volunteerperfer
+      lyj_requirement.lyj_requirement_volunteerperfer,
+      lyj_requirement.lyj_requirement_detailadd
   </sql>
 
     <!--子查询 查询所属的类型-->
-    <resultMap type="com.feng.oldfriend.entity.LyjRequirementVO" id="RequirementAndType">
-        <collection column="lyjRequirementId" property="allTypes" ofType="com.feng.oldfriend.entity.LyjRequirementType"
+    <resultMap type="com.feng.oldfriend.entity.LyjRequirementVO" id="RequirementAndType" extends="BaseResultMap">
+        <collection column="lyj_requirement_id" property="allTypes" ofType="com.feng.oldfriend.entity.LyjRequirementType"
                     select="getTypesById" >
         </collection>
     </resultMap>
@@ -67,22 +70,7 @@
     <select id="getLyjRequirements" resultMap="RequirementAndType">
         <bind name="pattern" value="'%' + searchText + '%'"/>
         SELECT
-        b.lyj_requirement_id as lyjRequirementId,
-        b.lyj_requirement_name as lyjRequirementName,
-        b.lyj_requirement_description as lyjRequirementDescription,
-        b.lyj_requirement_createuser as lyjRequirementCreateuser,
-        b.lyj_requirement_applyuser as lyjRequirementApplyuser,
-        b.lyj_requirement_isvolunteer as lyjRequirementIsvolunteer ,
-        b.lyj_requirement_city as lyjRequirementCity,
-        b.lyj_requirement_area as lyjRequirementArea,
-        b.lyj_requirement_street as lyjRequirementStreet,
-        b.lyj_requirement_createdatetime as lyjRequirementCreatedatetime,
-        b.lyj_requirement_begindatetime as lyjRequirementBegindatetime,
-        b.lyj_requirement_enddatetime as lyjRequirementEnddatetime,
-        b.lyj_requirement_rawaddress as lyjRequirementRawaddress,
-        b.lyj_requirement_maplocation as lyjRequirementMaplocation,
-        b.lyj_requirement_reward as lyjRequirementReward,
-        b.lyj_requirement_volunteerperfer as lyjRequirementVolunteerperfer
+        b.*
         FROM
         lyj_requirement b
         <where>
@@ -103,22 +91,7 @@
   <select id="getLyjRequirementsByTypeId" resultMap="RequirementAndType">
       <bind name="pattern" value="'%' + searchText + '%'"/>
       SELECT
-      b.lyj_requirement_id as lyjRequirementId,
-      b.lyj_requirement_name as lyjRequirementName,
-      b.lyj_requirement_description as lyjRequirementDescription,
-      b.lyj_requirement_createuser as lyjRequirementCreateuser,
-      b.lyj_requirement_applyuser as lyjRequirementApplyuser,
-      b.lyj_requirement_isvolunteer as lyjRequirementIsvolunteer ,
-      b.lyj_requirement_city as lyjRequirementCity,
-      b.lyj_requirement_area as lyjRequirementArea,
-      b.lyj_requirement_street as lyjRequirementStreet,
-      b.lyj_requirement_createdatetime as lyjRequirementCreatedatetime,
-      b.lyj_requirement_begindatetime as lyjRequirementBegindatetime,
-      b.lyj_requirement_enddatetime as lyjRequirementEnddatetime,
-      b.lyj_requirement_rawaddress as lyjRequirementRawaddress,
-      b.lyj_requirement_maplocation as lyjRequirementMaplocation,
-      b.lyj_requirement_reward as lyjRequirementReward,
-      b.lyj_requirement_volunteerperfer as lyjRequirementVolunteerperfer
+      b.*
       FROM
       lyj_requirementtype_relation a left join
       lyj_requirement b
@@ -156,7 +129,8 @@
       lyj_requirement_street, lyj_requirement_createdatetime, 
       lyj_requirement_begindatetime, lyj_requirement_enddatetime, 
       lyj_requirement_rawaddress, lyj_requirement_maplocation, 
-      lyj_requirement_reward,lyj_requirement_volunteerperfer)
+      lyj_requirement_reward,lyj_requirement_volunteerperfer,
+      lyj_requirement_detailadd)
     values (#{lyjRequirementId,jdbcType=INTEGER}, #{lyjRequirementName,jdbcType=VARCHAR}, 
       #{lyjRequirementDescription,jdbcType=VARCHAR}, #{lyjRequirementCreateuser,jdbcType=INTEGER}, 
       #{lyjRequirementApplyuser,jdbcType=INTEGER}, #{lyjRequirementIsvolunteer,jdbcType=INTEGER}, 
@@ -164,7 +138,8 @@
       #{lyjRequirementStreet,jdbcType=VARCHAR}, #{lyjRequirementCreatedatetime,jdbcType=TIMESTAMP}, 
       #{lyjRequirementBegindatetime,jdbcType=TIMESTAMP}, #{lyjRequirementEnddatetime,jdbcType=TIMESTAMP}, 
       #{lyjRequirementRawaddress,jdbcType=VARCHAR}, #{lyjRequirementMaplocation,jdbcType=VARCHAR}, 
-      #{lyjRequirementReward,jdbcType=INTEGER},#{lyjRequirementVolunteerperfer,jdbcType=INTEGER})
+      #{lyjRequirementReward,jdbcType=INTEGER},#{lyjRequirementVolunteerperfer,jdbcType=INTEGER},
+      #{lyjRequirementDetailadd,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.feng.oldfriend.entity.LyjRequirement">
     <!--
@@ -186,7 +161,8 @@
       lyj_requirement_rawaddress = #{lyjRequirementRawaddress,jdbcType=VARCHAR},
       lyj_requirement_maplocation = #{lyjRequirementMaplocation,jdbcType=VARCHAR},
       lyj_requirement_reward = #{lyjRequirementReward,jdbcType=INTEGER},
-      lyj_requirement_volunteerperfer=#{lyjRequirementVolunteerperfer,jdbcType=INTEGER}
+      lyj_requirement_volunteerperfer=#{lyjRequirementVolunteerperfer,jdbcType=INTEGER},
+      lyj_requirement_detailadd=#{lyjRequirementDetailadd,jdbcType=VARCHAR}
     where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -198,7 +174,7 @@
     lyj_requirement_applyuser, lyj_requirement_isvolunteer, lyj_requirement_city, lyj_requirement_area, 
     lyj_requirement_street, lyj_requirement_createdatetime, lyj_requirement_begindatetime, 
     lyj_requirement_enddatetime, lyj_requirement_rawaddress, lyj_requirement_maplocation, 
-    lyj_requirement_reward,lyj_requirement_volunteerperfer
+    lyj_requirement_reward,lyj_requirement_volunteerperfer,lyj_requirement_detailadd
     from lyj_requirement
     where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
   </select>
@@ -211,7 +187,7 @@
     lyj_requirement_applyuser, lyj_requirement_isvolunteer, lyj_requirement_city, lyj_requirement_area, 
     lyj_requirement_street, lyj_requirement_createdatetime, lyj_requirement_begindatetime, 
     lyj_requirement_enddatetime, lyj_requirement_rawaddress, lyj_requirement_maplocation, 
-    lyj_requirement_reward,lyj_requirement_volunteerperfer
+    lyj_requirement_reward,lyj_requirement_volunteerperfer,lyj_requirement_detailadd
     from lyj_requirement
   </select>
 </mapper>

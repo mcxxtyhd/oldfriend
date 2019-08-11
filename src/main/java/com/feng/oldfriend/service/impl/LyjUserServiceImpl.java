@@ -1,5 +1,6 @@
 package com.feng.oldfriend.service.impl;
 
+import com.feng.oldfriend.Utils.Md5Util;
 import com.feng.oldfriend.dao.LyjUserMapper;
 import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.service.LyjUserService;
@@ -35,8 +36,34 @@ public class LyjUserServiceImpl implements LyjUserService {
     }
 
     @Override
-    public void saveUser(LyjUser user) {
+    public String saveUser(LyjUser user) {
+        //根据手机号码和密码生成用户唯一标识
+        String encryptUserInfo= Md5Util.string2MD5(user.getLyjUserPhone()+user.getLyjUserPassword());
+        user.setLyjUserUuid(encryptUserInfo);
+
         lyjUserMapper.insert(user);
+
+        return encryptUserInfo;
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/11 16:40
+     * description: 用户登录
+     */
+    @Override
+    public LyjUser loginUser(String phone,String password) {
+        return lyjUserMapper.userLogin(phone,password);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/11 16:49
+     * description: 根据唯一标识找到用户
+     */
+    @Override
+    public LyjUser getUserByInfo(String userUUID) {
+        return lyjUserMapper.findUserByUUID(userUUID);
     }
 
     @Override

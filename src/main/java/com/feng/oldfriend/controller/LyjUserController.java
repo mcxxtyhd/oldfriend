@@ -107,15 +107,50 @@ public class LyjUserController {
      * create time: 2019/7/28 14:55
      * description: 新增用户信息
      */
-    @ApiOperation(value = "新增用户")
+    @ApiOperation(value = "新增用户(注册)")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "新增的用户", required = true)
     })
     @PostMapping()
     public ResponseEntity addUser(@RequestBody LyjUser lyjUser){
         try{
-            lyjUserService.saveUser(lyjUser);
-            return new ResponseEntity(HttpStatus.OK);
+            String encryptUserInfo=lyjUserService.saveUser(lyjUser);
+            return new ResponseEntity(encryptUserInfo,HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/11 16:38
+     * description: 用户登录  成功返回用户信息
+     */
+    @ApiOperation(value = "用户登录")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "phone", dataType = "String", value = "手机号码", required = true),
+            @ApiImplicitParam(paramType = "query", name = "password", dataType = "String", value = "密码", required = true)
+    })
+    @GetMapping("/login")
+    public ResponseEntity loginUser(@RequestParam(value = "phone", required = true) String phone,
+                                    @RequestParam(value = "password", required = true) String password){
+        try{
+            return new ResponseEntity(lyjUserService.loginUser(phone,password),HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ApiOperation(value = "根据唯一标识找到用户")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "uuid", dataType = "String", value = "需要查找用户的UUID", required = true)
+    })
+    @GetMapping("/userinfo")
+    public ResponseEntity getUserInfoByUUID(@RequestParam(value = "userUUID", required = true) String userUUID){
+        try{
+            return new ResponseEntity(lyjUserService.getUserByInfo(userUUID),HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);

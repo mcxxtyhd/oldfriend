@@ -1,5 +1,10 @@
 package com.feng.oldfriend.Utils;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author ：yangchenxiao
  * @date ：Created in 2019/8/11 16:26
@@ -7,8 +12,13 @@ package com.feng.oldfriend.Utils;
  */
 public class test {
 
-    public static void main(String[] args) {
-        String newString=Md5Util.string2MD5("theoyong");
-        System.out.println(newString);
+    public static void main(String[] args) throws Exception{
+        List<Integer> newList=new ArrayList<>();
+
+
+
+        System.out.println(MathUtils.convertToStar(newList));
+
+        System.out.println(MathUtils.getAgeByBirth(MathUtils.convertToDate("1914-08-17")));
     }
 }

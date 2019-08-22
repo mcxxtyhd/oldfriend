@@ -1,5 +1,6 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjAdvertisement;
 import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.service.LyjAdvertisementService;
@@ -39,15 +40,14 @@ public class LyjAdvertisementController {
      */
     @ApiOperation(value = "根据广告页找到指定的图片url")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "pageName", dataType = "String", value = "哪个页面的广告", required = true)
+            @ApiImplicitParam(paramType = "query", name = "pageName", dataType = "String", value = "哪个页面的广告", required = false)
     })
     @GetMapping()
-    public ResponseEntity getAdvertisementByPageName(@RequestParam(value = "pageName", required = false) String pageName) {
+    public CommonResponse getAdvertisementByPageName(@RequestParam(value = "pageName", required = false) String pageName) {
         List<LyjAdvertisement> tyjAdvertisement=lyjAdvertisementService.getAdvertisementsByPagename(pageName);
-        return new ResponseEntity(tyjAdvertisement,HttpStatus.OK);
+        return new CommonResponse(tyjAdvertisement,200,lyjAdvertisementService.getAdvertisementByPageNameCount(pageName));
 
     }
-
 
     /**
      * create by: yangchenxiao
@@ -59,12 +59,13 @@ public class LyjAdvertisementController {
             @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "新增的广告", required = true)
     })
     @PostMapping()
-    public ResponseEntity addAdvertisement(@RequestBody LyjAdvertisement lyjAdvertisement){
+    public CommonResponse addAdvertisement(@RequestBody LyjAdvertisement lyjAdvertisement){
         try{
             lyjAdvertisementService.saveAdvertisement(lyjAdvertisement);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
@@ -78,10 +79,10 @@ public class LyjAdvertisementController {
             @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "更新的广告信息", required = true)
     })
     @PutMapping()
-    public ResponseEntity updateAdvertisement(@RequestBody LyjAdvertisement lyjAdvertisement) {
+    public CommonResponse updateAdvertisement(@RequestBody LyjAdvertisement lyjAdvertisement) {
 
         lyjAdvertisementService.updateAdvertisement(lyjAdvertisement);
-        return new ResponseEntity(HttpStatus.OK);
+        return new CommonResponse(200);
     }
 
     /**
@@ -94,12 +95,13 @@ public class LyjAdvertisementController {
             @ApiImplicitParam(paramType = "query", name = "lyjAdvertisementId", dataType = "Integer", value = "需要删除的广告ID", required = true)
     })
     @DeleteMapping("/{lyjAdvertisementId}")
-    public ResponseEntity removeAdvertisement(@PathVariable("lyjAdvertisementId") Integer lyjAdvertisementId) {
+    public CommonResponse removeAdvertisement(@PathVariable("lyjAdvertisementId") Integer lyjAdvertisementId) {
         try{
             lyjAdvertisementService.removeAdvertisement(lyjAdvertisementId);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
 
     }

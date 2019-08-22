@@ -5,6 +5,36 @@ import java.util.Date;
 
 public class LyjUser implements Serializable {
 
+    private String personalStar;
+
+    private Integer allDuration;
+
+    public String getPersonalStar() {
+        return personalStar;
+    }
+
+    public void setPersonalStar(String personalStar) {
+        this.personalStar = personalStar;
+    }
+
+    public Integer getAllDuration() {
+        return allDuration;
+    }
+
+    public void setAllDuration(Integer allDuration) {
+        this.allDuration = allDuration;
+    }
+
+    private Integer lyjVolunteerId;
+
+    public Integer getLyjVolunteerId() {
+        return lyjVolunteerId;
+    }
+
+    public void setLyjVolunteerId(Integer lyjVolunteerId) {
+        this.lyjVolunteerId = lyjVolunteerId;
+    }
+
     private String lyjUserPassword;
 
     private String lyjUserUuid;
@@ -140,16 +170,6 @@ public class LyjUser implements Serializable {
     private String lyjUserCreditnegative;
 
     private Integer lyjUserRewards;
-
-    private Integer lyjVolunteerId;
-
-    public Integer getLyjVolunteerId() {
-        return lyjVolunteerId;
-    }
-
-    public void setLyjVolunteerId(Integer lyjVolunteerId) {
-        this.lyjVolunteerId = lyjVolunteerId;
-    }
 
     public Integer getLyjUserRewards() {
         return lyjUserRewards;

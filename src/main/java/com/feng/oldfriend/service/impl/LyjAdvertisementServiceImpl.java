@@ -24,6 +24,11 @@ public class LyjAdvertisementServiceImpl implements LyjAdvertisementService {
         return lyjAdvertisementMapper.selectAdvertisementsByPagename(pageName);
     }
 
+    @Override
+    public Integer getAdvertisementByPageNameCount(String pageName) {
+        return lyjAdvertisementMapper.getAdvertisementByPageNameCount(pageName);
+    }
+
     /**
      * create by: yangchenxiao
      * create time: 2019/8/4 11:28

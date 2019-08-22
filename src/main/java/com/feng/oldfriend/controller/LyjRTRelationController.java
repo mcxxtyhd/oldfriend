@@ -1,5 +1,6 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.service.LyjRTRelationService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -9,7 +10,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,9 +33,9 @@ public class LyjRTRelationController {
             @ApiImplicitParam(paramType = "body", name = "typeIds", dataType = "List<Integer>", value = "类型ID组", required = true)
     })
     @PostMapping("/{requirementId}")
-    public ResponseEntity addRTRelation(@PathVariable("requirementId") Integer requirementId, @RequestBody Integer[] typeIds) {
+    public CommonResponse addRTRelation(@PathVariable("requirementId") Integer requirementId, @RequestBody Integer[] typeIds) {
         lyjRTRelationService.addRTRelation(requirementId,typeIds);
-        return new ResponseEntity(HttpStatus.OK);
+        return new CommonResponse(200);
 
     }
 
@@ -45,12 +45,13 @@ public class LyjRTRelationController {
             @ApiImplicitParam(paramType = "body", name = "typeIds", dataType = "List<Integer>", value = "类型ID组", required = true)
     })
     @PostMapping("/advanced/{requirementId}")
-    public ResponseEntity addRTRelationAdvanced(@PathVariable("requirementId") Integer requirementId, @RequestBody Integer[] typeIds) {
+    public CommonResponse addRTRelationAdvanced(@PathVariable("requirementId") Integer requirementId, @RequestBody Integer[] typeIds) {
         try{
             lyjRTRelationService.addRTRelationAdvanced(requirementId,typeIds);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
@@ -59,9 +60,9 @@ public class LyjRTRelationController {
             @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需要删除关系数据的需求ID", required = true)
     })
     @DeleteMapping("/{requirementId}")
-    public ResponseEntity removeRequirement(@PathVariable("requirementId") Integer requirementId) {
+    public CommonResponse removeRequirement(@PathVariable("requirementId") Integer requirementId) {
         lyjRTRelationService.removeRTRelationByRid(requirementId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new CommonResponse(200);
 
     }
 

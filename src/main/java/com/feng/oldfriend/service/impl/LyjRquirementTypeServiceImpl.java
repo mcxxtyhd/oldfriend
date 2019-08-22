@@ -25,8 +25,13 @@ public class LyjRquirementTypeServiceImpl implements LyjRquirementTypeService {
      * description: 获取所有的需求类型
      */
     @Override
-    public List<LyjRequirementType> getLyjRequirementTypes() {
-        return lyjRequirementTypeMapper.selectAll();
+    public List<LyjRequirementType> getLyjRequirementTypes(String searchText) {
+        return lyjRequirementTypeMapper.selectAll(searchText);
+    }
+
+    @Override
+    public Integer getLyjRequirementTypesCount(String searchText) {
+        return lyjRequirementTypeMapper.selectAllCount(searchText);
     }
 
     /**
@@ -37,6 +42,11 @@ public class LyjRquirementTypeServiceImpl implements LyjRquirementTypeService {
     @Override
     public void saveRquirementType(LyjRequirementType lyjRequirementType) {
         lyjRequirementTypeMapper.insert(lyjRequirementType);
+    }
+
+    @Override
+    public void updateRquirementType(LyjRequirementType lyjRequirementType) {
+        lyjRequirementTypeMapper.updateByPrimaryKey(lyjRequirementType);
     }
 
     /**

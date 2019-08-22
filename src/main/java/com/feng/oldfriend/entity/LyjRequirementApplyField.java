@@ -1,6 +1,7 @@
 package com.feng.oldfriend.entity;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author ：yangchenxiao
@@ -9,8 +10,9 @@ import java.util.Date;
  */
 public class LyjRequirementApplyField {
 
+    private String lyj_user_name;
     private Integer lyj_requirement_applyid;
-    private Integer lyj_user_id;
+    private String lyj_user_id;
     private Integer lyj_volunteer_id;
     private Integer lyj_requirement_applystate;
     private String lyj_requirement_applycomment;
@@ -20,8 +22,8 @@ public class LyjRequirementApplyField {
     private Integer lyj_requirement_id;
     private String lyj_requirement_name;
     private String lyj_requirement_description;
-    private Integer lyj_requirement_createuser;
-    private Integer lyj_requirement_applyuser;
+    private String lyj_requirement_createuser;
+    private String lyj_requirement_applyuser;
     private Integer lyj_requirement_isvolunteer;
     private String lyj_requirement_city;
     private String lyj_requirement_area;
@@ -32,7 +34,32 @@ public class LyjRequirementApplyField {
     private String lyj_requirement_rawaddress;
     private String lyj_requirement_maplocation;
     private Integer  lyj_requirement_reward;
-    private Integer lyj_requirement_volunteerperfe;
+    private Integer lyj_requirement_volunteerperfer;
+    private List<LyjRequirementType> allTypes;
+
+    public List<LyjRequirementType> getAllTypes() {
+        return allTypes;
+    }
+
+    public void setAllTypes(List<LyjRequirementType> allTypes) {
+        this.allTypes = allTypes;
+    }
+
+    public String getLyj_user_name() {
+        return lyj_user_name;
+    }
+
+    public void setLyj_user_name(String lyj_user_name) {
+        this.lyj_user_name = lyj_user_name;
+    }
+
+    public Integer getLyj_requirement_volunteerperfer() {
+        return lyj_requirement_volunteerperfer;
+    }
+
+    public void setLyj_requirement_volunteerperfer(Integer lyj_requirement_volunteerperfer) {
+        this.lyj_requirement_volunteerperfer = lyj_requirement_volunteerperfer;
+    }
 
     public Integer getLyj_requirement_applyid() {
         return lyj_requirement_applyid;
@@ -42,11 +69,11 @@ public class LyjRequirementApplyField {
         this.lyj_requirement_applyid = lyj_requirement_applyid;
     }
 
-    public Integer getLyj_user_id() {
+    public String getLyj_user_id() {
         return lyj_user_id;
     }
 
-    public void setLyj_user_id(Integer lyj_user_id) {
+    public void setLyj_user_id(String lyj_user_id) {
         this.lyj_user_id = lyj_user_id;
     }
 
@@ -122,19 +149,19 @@ public class LyjRequirementApplyField {
         this.lyj_requirement_description = lyj_requirement_description;
     }
 
-    public Integer getLyj_requirement_createuser() {
+    public String getLyj_requirement_createuser() {
         return lyj_requirement_createuser;
     }
 
-    public void setLyj_requirement_createuser(Integer lyj_requirement_createuser) {
+    public void setLyj_requirement_createuser(String lyj_requirement_createuser) {
         this.lyj_requirement_createuser = lyj_requirement_createuser;
     }
 
-    public Integer getLyj_requirement_applyuser() {
+    public String getLyj_requirement_applyuser() {
         return lyj_requirement_applyuser;
     }
 
-    public void setLyj_requirement_applyuser(Integer lyj_requirement_applyuser) {
+    public void setLyj_requirement_applyuser(String lyj_requirement_applyuser) {
         this.lyj_requirement_applyuser = lyj_requirement_applyuser;
     }
 
@@ -216,14 +243,6 @@ public class LyjRequirementApplyField {
 
     public void setLyj_requirement_reward(Integer lyj_requirement_reward) {
         this.lyj_requirement_reward = lyj_requirement_reward;
-    }
-
-    public Integer getLyj_requirement_volunteerperfe() {
-        return lyj_requirement_volunteerperfe;
-    }
-
-    public void setLyj_requirement_volunteerperfe(Integer lyj_requirement_volunteerperfe) {
-        this.lyj_requirement_volunteerperfe = lyj_requirement_volunteerperfe;
     }
 
     private static final long serialVersionUID = 1L;

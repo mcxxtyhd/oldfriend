@@ -15,21 +15,32 @@ public interface LyjVolunteerService {
      */
     List<LyjVolunteer> getAllVolunteer();
 
+    Integer getAllVolunteerCount();
+
     /**
      * create by: yangchenxiao
      * create time: 2019/7/29 21:50
      * description: 根据用户ID查找到志愿者ID
      */
-    List<LyjVolunteer> getVolunteerByUserId(Integer userId);
+    LyjVolunteer getVolunteerByUserId(String userId);
+
 
     /**
      * create by: yangchenxiao
      * create time: 2019/7/29 21:50
      * description: 根据志愿者ID查找到志愿者
      */
-    List<LyjVolunteer> getVolunteerByVolunteerId(Integer volunteerId);
+    LyjVolunteer getVolunteerByVolunteerId(Integer volunteerId);
 
-    void saveVolunteer(LyjVolunteer lyjVolunteer);
+    Integer saveVolunteer(String userid);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/13 22:30
+     * description: 成为义工
+     */
+    void becomeVolunteer(LyjUser userid);
+
 
     void removeVolunteer(Integer id);
 

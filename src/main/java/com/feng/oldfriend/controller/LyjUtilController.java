@@ -1,5 +1,6 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.service.LyjUtilService;
 import io.swagger.annotations.Api;
@@ -11,6 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author ：yangchenxiao
@@ -31,14 +37,14 @@ public class LyjUtilController {
             @ApiImplicitParam(paramType = "body", name = "img", dataType = "file", value = "上传的图片", required = true)
     })
     @PostMapping("/UploadImg")
-    public ResponseEntity uploadImg(@RequestParam("img") MultipartFile file) {
+    public CommonResponse uploadImg(@RequestParam("img") MultipartFile file) {
         try{
             //获得上传文件的地址
             String filePath= lyjUtilService.saveFile(file);
-            return new ResponseEntity(filePath, HttpStatus.OK);
+            return new CommonResponse(filePath, 200);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CommonResponse(500);
         }
     }
 
@@ -47,14 +53,14 @@ public class LyjUtilController {
             @ApiImplicitParam(paramType = "query", name = "phone", dataType = "String", value = "手机号码", required = true)
     })
     @GetMapping("/RegisterCheck")
-    public ResponseEntity registerCheck(@RequestParam("phone") String phoneNumber) {
+    public CommonResponse registerCheck(@RequestParam("phone") String phoneNumber) {
         try{
             //获得上传文件的地址
             String checkCode= lyjUtilService.registerCheck(phoneNumber);
-            return new ResponseEntity(checkCode, HttpStatus.OK);
+            return new CommonResponse(checkCode, 200);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CommonResponse(500);
         }
     }
 

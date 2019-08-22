@@ -1,14 +1,16 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.config.CommonResponse;
+import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.entity.LyjVolunteer;
 import com.feng.oldfriend.service.LyjVolunteerService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,28 +29,42 @@ public class LyjVolunteerController {
     private LyjVolunteerService lyjVolunteerService;
 
     @ApiOperation(value = "查询所有的义工")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10")
+    })
     @GetMapping()
-    public ResponseEntity getVolunteerByUserId() {
+    public CommonResponse getVolunteer(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                               @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         try{
-            List<LyjVolunteer> lyjVolunteers=lyjVolunteerService.getAllVolunteer();
-            return new ResponseEntity(lyjVolunteers, HttpStatus.OK);
+
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? 10 : pageSize;
+
+            PageHelper.startPage(pageNo, pageSize);
+            PageInfo pageInfo = new PageInfo(lyjVolunteerService.getAllVolunteer());
+
+            return new CommonResponse(pageInfo, 200,lyjVolunteerService.getAllVolunteerCount());
+
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
 
-    @ApiOperation(value = "根据用户ID查询义工ID")
+    @ApiOperation(value = "根据用户唯一标识查询义工ID")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "userId", dataType = "Integer", value = "用户ID", required = true),
+            @ApiImplicitParam(paramType = "query", name = "userId", dataType = "String", value = "用户ID", required = true),
     })
     @GetMapping("/user/{userId}")
-    public ResponseEntity getVolunteerByUserId(@PathVariable("userId") Integer userId) {
+    public CommonResponse getVolunteerByUserId(@PathVariable("userId") String userId) {
         try{
-            List<LyjVolunteer> lyjVolunteers=lyjVolunteerService.getVolunteerByUserId(userId);
-            return new ResponseEntity(lyjVolunteers, HttpStatus.OK);
+            LyjVolunteer lyjVolunteer=lyjVolunteerService.getVolunteerByUserId(userId);
+            return new CommonResponse(lyjVolunteer, 200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
@@ -57,12 +73,13 @@ public class LyjVolunteerController {
             @ApiImplicitParam(paramType = "query", name = "volunteerId", dataType = "Integer", value = "义工ID", required = true),
     })
     @GetMapping("/{volunteerId}")
-    public ResponseEntity getVolunteerById(@PathVariable("volunteerId") Integer volunteerId) {
+    public CommonResponse getVolunteerById(@PathVariable("volunteerId") Integer volunteerId) {
         try{
-            List<LyjVolunteer> lyjVolunteers=lyjVolunteerService.getVolunteerByVolunteerId(volunteerId);
-            return new ResponseEntity(lyjVolunteers, HttpStatus.OK);
+            LyjVolunteer lyjVolunteer=lyjVolunteerService.getVolunteerByVolunteerId(volunteerId);
+            return new CommonResponse(lyjVolunteer, 200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
@@ -73,15 +90,35 @@ public class LyjVolunteerController {
      */
     @ApiOperation(value = "新增义工")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "body", name = "LyjVolunteer", dataType = "LyjVolunteer", value = "新增的义工", required = true)
+            @ApiImplicitParam(paramType = "query", name = "userid", dataType = "String", value = "新增义工的用户唯一标识", required = true)
     })
     @PostMapping()
-    public ResponseEntity addLyjVolunteer(@RequestBody LyjVolunteer lyjVolunteer){
+    public CommonResponse addLyjVolunteer(@RequestParam("userid")String userid ){
         try{
-            lyjVolunteerService.saveVolunteer(lyjVolunteer);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(lyjVolunteerService.saveVolunteer(userid),200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/29 21:47
+     * description: 成为义工(新增义工的升级版)
+     */
+    @ApiOperation(value = "新增义工(升级版)")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "userVolunteer", dataType = "user", value = "新增义工的用户信息", required = true)
+    })
+    @PostMapping("/becomeV")
+    public CommonResponse becomeVolunteer(@RequestBody LyjUser lyjUser ){
+        try{
+            lyjVolunteerService.becomeVolunteer(lyjUser);
+            return new CommonResponse(200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
@@ -95,12 +132,13 @@ public class LyjVolunteerController {
             @ApiImplicitParam(paramType = "query", name = "volunteerId", dataType = "Integer", value = "需要删除的义工ID", required = true)
     })
     @DeleteMapping("/{VolunteerId}")
-    public ResponseEntity removeVolunteer(@PathVariable("volunteerId") Integer volunteerId) {
+    public CommonResponse removeVolunteer(@PathVariable("volunteerId") Integer volunteerId) {
         try{
             lyjVolunteerService.removeVolunteer(volunteerId);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
 
     }

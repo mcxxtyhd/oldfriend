@@ -1,5 +1,6 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementType;
 import com.feng.oldfriend.service.LyjRquirementTypeService;
@@ -11,9 +12,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -32,10 +33,12 @@ public class LyjRquirementTypeController {
     @ApiOperation(value = "查询需求类型")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
-            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10")})
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),})
     @GetMapping()
-    public ResponseEntity getRequirement(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                         @RequestParam(value = "pageSize", required = false) Integer pageSize)
+    public CommonResponse getRequirement(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                         @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                         @RequestParam(value = "searchText", required = false) String searchText)
     {
 
         pageNo = pageNo == null ? 1 : pageNo;
@@ -43,8 +46,18 @@ public class LyjRquirementTypeController {
 
         PageHelper.startPage(pageNo, pageSize);
 
-        PageInfo pageInfo = new PageInfo(lyjRquirementTypeService.getLyjRequirementTypes());
-        return new ResponseEntity(pageInfo, HttpStatus.OK);
+        PageInfo pageInfo = new PageInfo(lyjRquirementTypeService.getLyjRequirementTypes(searchText));
+        return new CommonResponse(pageInfo, 200,lyjRquirementTypeService.getLyjRequirementTypesCount(searchText));
+
+    }
+
+    @ApiOperation(value = "查询需求类型(Count)")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),})
+    @GetMapping("/Count")
+    public CommonResponse getRequirementCount(@RequestParam(value = "searchText", required = false) String searchText)
+    {
+        return new CommonResponse(lyjRquirementTypeService.getLyjRequirementTypes(searchText), 200,lyjRquirementTypeService.getLyjRequirementTypesCount(searchText));
 
     }
 
@@ -52,16 +65,31 @@ public class LyjRquirementTypeController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "parentID", dataType = "Integer", value = "父ID")})
     @GetMapping("/Sons")
-    public ResponseEntity getRequirement(@RequestParam(value = "parentId", required = false) Integer parentId)
+    public CommonResponse getRequirement(@RequestParam(value = "parentId", required = false) Integer parentId)
     {
-//        try{
+        try{
             List<LyjRequirementType> lyjRequirementTypes = lyjRquirementTypeService.getSonRequirementTypes(parentId);
-            return new ResponseEntity(lyjRequirementTypes, HttpStatus.OK);
-//        }
-//        catch (Exception e){
-//            System.out.println(e.toString());
-//            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+            return new CommonResponse(lyjRequirementTypes, 200);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+
+    }
+
+    @ApiOperation(value = "返回所有的父需求类型")
+    @GetMapping("/Father")
+    public CommonResponse getFatherRequirement()
+    {
+        try{
+            List<LyjRequirementType> lyjRequirementTypes = lyjRquirementTypeService.getSonRequirementTypes(null);
+            return new CommonResponse(lyjRequirementTypes, 200);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
 
     }
 
@@ -70,12 +98,28 @@ public class LyjRquirementTypeController {
             @ApiImplicitParam(paramType = "body", name = "rquirementType", dataType = "RquirementType", value = "需求类型", required = true)
     })
     @PostMapping()
-    public ResponseEntity addRequirement(@RequestBody LyjRequirementType lyjRequirementType) {
+    public CommonResponse addRequirementType(@RequestBody LyjRequirementType lyjRequirementType) {
         try{
             lyjRquirementTypeService.saveRquirementType(lyjRequirementType);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+    }
+
+    @ApiOperation(value = "编辑需求类型")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "rquirementType", dataType = "RquirementType", value = "需求类型", required = true)
+    })
+    @PutMapping()
+    public CommonResponse updateRequirementType(@RequestBody LyjRequirementType lyjRequirementType) {
+        try{
+            lyjRquirementTypeService.updateRquirementType(lyjRequirementType);
+            return new CommonResponse(200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
     }
 
@@ -85,12 +129,13 @@ public class LyjRquirementTypeController {
             @ApiImplicitParam(paramType = "query", name = "rquirementTypeId", dataType = "Integer", value = "需要删除的需求类型ID", required = true)
     })
     @DeleteMapping("/{rquirementTypeId}")
-    public ResponseEntity removeRequirement(@PathVariable("rquirementTypeId") Integer rquirementTypeId) {
+    public CommonResponse removeRequirementType(@PathVariable("rquirementTypeId") Integer rquirementTypeId) {
         try{
             lyjRquirementTypeService.removeRquirementType(rquirementTypeId);
-            return new ResponseEntity(HttpStatus.OK);
+            return new CommonResponse(200);
         }catch (Exception e){
-            return new ResponseEntity("后台程序出错，请联系管理员查看",HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
 
     }

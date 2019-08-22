@@ -13,7 +13,9 @@ public interface LyjRquirementTypeService {
      * create time: 2019/7/24 21:05
      * description: 根据搜索条件进行查找
      */
-    List<LyjRequirementType> getLyjRequirementTypes();
+    List<LyjRequirementType> getLyjRequirementTypes(String searchText);
+
+    Integer getLyjRequirementTypesCount(String searchText);
 
     /**
      * create by: yangchenxiao
@@ -21,6 +23,8 @@ public interface LyjRquirementTypeService {
      * description: 新增需求类型
      */
     void saveRquirementType(LyjRequirementType lyjRequirementType);
+
+    void updateRquirementType(LyjRequirementType lyjRequirementType);
 
     /**
      * create by: yangchenxiao

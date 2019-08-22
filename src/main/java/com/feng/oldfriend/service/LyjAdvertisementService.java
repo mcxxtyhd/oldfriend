@@ -14,6 +14,8 @@ public interface LyjAdvertisementService {
      */
     List<LyjAdvertisement> getAdvertisementsByPagename(String pageName);
 
+    Integer getAdvertisementByPageNameCount(String pageName);
+
 
     void saveAdvertisement(LyjAdvertisement lyjAdvertisement);
 

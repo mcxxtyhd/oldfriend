@@ -37,6 +37,16 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
         }
     }
 
+    @Override
+    public Integer getRequirementCount(String searchText, Integer typeId) {
+        //判断需求类型ID是否为空，根据是否为空来提出两个不同的解决方案
+        if(null==typeId){
+            return lyjRequirementMapper.getLyjRequirementsCount(searchText);
+        }else{
+            return lyjRequirementMapper.getLyjRequirementsByTypeIdCount(searchText,typeId);
+        }
+    }
+
     /**
      * create by: yangchenxiao
      * create time: 2019/7/28 14:46
@@ -55,6 +65,26 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
     @Override
     public List<LyjRequirementType> getTypesById(Integer requirementId) {
         return lyjRequirementMapper.getTypesById(requirementId);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/18 11:21
+     * description: 我创建的需求
+     */
+    @Override
+    public List<LyjRequirement> getMyRequirement(String uuid) {
+        return lyjRequirementMapper.getMyRequirement(uuid);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/18 11:21
+     * description: 我申请中标了的请求
+     */
+    @Override
+    public List<LyjRequirement> getMyApplyRequirement(String uuid) {
+        return lyjRequirementMapper.getMyApplyRequirement(uuid);
     }
 
     @Override

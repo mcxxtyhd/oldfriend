@@ -61,14 +61,14 @@
         </dependency>
 
 
-        <!--servlet-api-->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <!-- 只在编译和测试的时候用 -->
-            <scope>provided</scope>
-        </dependency>
+        <!--&lt;!&ndash;servlet-api&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet</groupId>-->
+            <!--<artifactId>javax.servlet-api</artifactId>-->
+            <!--<version>3.1.0</version>-->
+            <!--&lt;!&ndash; 只在编译和测试的时候用 &ndash;&gt;-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
 
         <!-- springboot -->

@@ -2,6 +2,7 @@ package com.feng.oldfriend.service;
 
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementType;
+import com.feng.oldfriend.entity.LyjRequirementVO;
 import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
 
 import java.util.List;
@@ -45,9 +46,21 @@ public interface LyjRequirementService {
      */
     List<LyjRequirement> getMyApplyRequirement(String uuid);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/23 22:01
+     * description: 只能增加一个需求类型
+     */
     void saveRequirement(Integer typeId,LyjRequirement lyjRequirement);
 
-    void updateRequirement(LyjRequirement lyjRequirement);
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/23 22:02
+     * description: 可以增加多个需求类型
+     */
+    void saveRequirementAdvanced(LyjRequirementVO lyjRequirementVO);
+
+    void updateRequirement(LyjRequirementVO lyjRequirement);
 
     void removeRequirement(Integer id);
 }

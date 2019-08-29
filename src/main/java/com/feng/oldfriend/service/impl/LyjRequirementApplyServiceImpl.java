@@ -128,6 +128,11 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
         lyjRequirementApplyMapper.updateByPrimaryKey(LyjRequirementApply);
     }
 
+    @Override
+    public void delRequirementApply(Integer id) {
+        lyjRequirementApplyMapper.deleteByPrimaryKey(id);
+    }
+
     /**
      * create by: yangchenxiao
      * create time: 2019/8/19 19:53

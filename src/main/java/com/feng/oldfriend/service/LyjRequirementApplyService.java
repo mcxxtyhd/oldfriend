@@ -49,6 +49,8 @@ public interface LyjRequirementApplyService {
      */
     void updateRequirementApply(LyjRequirementApply LyjRequirementApply);
 
+    void delRequirementApply(Integer id);
+
     /**
      * create by: yangchenxiao
      * create time: 2019/8/19 19:53

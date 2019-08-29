@@ -150,6 +150,22 @@ public class LyjUserController {
 
     /**
      * create by: yangchenxiao
+     * create time: 2019/8/26 21:32
+     * description: 后台的新增用户信息
+     */
+    @ApiOperation(value = "后台的新增用户信息")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "后台的新增的用户信息", required = true)
+    })
+    @PostMapping()
+    public CommonResponse addUserBack(@RequestBody LyjUser lyjUser) {
+
+        lyjUserService.saveUser(lyjUser);
+        return new CommonResponse(200);
+    }
+
+    /**
+     * create by: yangchenxiao
      * create time: 2019/7/28 14:55
      * description: 更新用户信息
      */

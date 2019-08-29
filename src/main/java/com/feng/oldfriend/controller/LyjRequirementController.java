@@ -3,6 +3,7 @@ package com.feng.oldfriend.controller;
 import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementType;
+import com.feng.oldfriend.entity.LyjRequirementVO;
 import com.feng.oldfriend.service.LyjRequirementService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -117,7 +118,7 @@ public class LyjRequirementController {
         }
     }
 
-    @ApiOperation(value = "新增需求")
+    @ApiOperation(value = "新增需求包括需求类型(单独)")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "typeId", dataType = "Integer", value = "该新增需求的类型ID", required = true),
             @ApiImplicitParam(paramType = "body", name = "requirement", dataType = "Requirement", value = "新增的需求信息", required = true)
@@ -133,12 +134,27 @@ public class LyjRequirementController {
         }
     }
 
+    @ApiOperation(value = "新增需求(包含多个需求类型(非必填))")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "requirement", dataType = "Requirement", value = "新增的需求信息", required = true)
+    })
+    @PostMapping()
+    public CommonResponse addRequirementAdvanced(@RequestBody LyjRequirementVO lyjRequirementVO) {
+        try{
+            lyjRequirementService.saveRequirementAdvanced(lyjRequirementVO);
+            return new CommonResponse(lyjRequirementVO,200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+    }
+
     @ApiOperation(value = "更新需求")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "body", name = "requirement", dataType = "Requirement", value = "更新的需求信息", required = true)
     })
     @PutMapping()
-    public CommonResponse updateRequirement(@RequestBody LyjRequirement lyjRequirement) {
+    public CommonResponse updateRequirement(@RequestBody LyjRequirementVO lyjRequirement) {
 
         lyjRequirementService.updateRequirement(lyjRequirement);
         return new CommonResponse(200);

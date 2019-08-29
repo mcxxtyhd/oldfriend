@@ -16,6 +16,16 @@ public class LyjRequirementVO implements Serializable {
         this.lyjRequirementDetailadd = lyjRequirementDetailadd;
     }
 
+    private List<Integer> allTypeIds;
+
+    public List<Integer> getAllTypeIds() {
+        return allTypeIds;
+    }
+
+    public void setAllTypeIds(List<Integer> allTypeIds) {
+        this.allTypeIds = allTypeIds;
+    }
+
     /**
      * create by: yangchenxiao
      * create time: 2019/8/10 18:46

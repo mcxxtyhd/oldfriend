@@ -4,6 +4,7 @@ import com.feng.oldfriend.dao.LyjRequirementMapper;
 import com.feng.oldfriend.dao.LyjRequirementtypeRelationMapper;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementType;
+import com.feng.oldfriend.entity.LyjRequirementVO;
 import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
 import com.feng.oldfriend.service.LyjRequirementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,9 +99,43 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
         lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId,typeId));
     }
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/23 22:02
+     * description: 可以增加多个需求类型
+     */
     @Override
-    public void updateRequirement(LyjRequirement lyjRequirement) {
+    @Transactional
+    public void saveRequirementAdvanced(LyjRequirementVO lyjRequirementVO) {
+        //1、先增加需求
+        lyjRequirementVO.setLyjRequirementCreatedatetime(new Date());
+        lyjRequirementMapper.insertAdvanced(lyjRequirementVO);
+        Integer requirementId=lyjRequirementVO.getLyjRequirementId();
+
+        if(null!=lyjRequirementVO.getAllTypeIds()){
+            for(Integer single:lyjRequirementVO.getAllTypeIds()){
+                //2、再增加需求和类型关系表的数据
+                lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId,single));
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateRequirement(LyjRequirementVO lyjRequirement) {
+        //1、删除所有的类型关系表中的数据
+        lyjRequirementtypeRelationMapper.deleteByRequirementId(lyjRequirement.getLyjRequirementId());
+
+        //2、再更新
         lyjRequirementMapper.updateByPrimaryKey(lyjRequirement);
+
+        //3、再增加关系数据
+        if(null!=lyjRequirement.getAllTypeIds()){
+            for(Integer single:lyjRequirement.getAllTypeIds()){
+                //2、再增加需求和类型关系表的数据
+                lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(lyjRequirement.getLyjRequirementId(),single));
+            }
+        }
     }
 
     @Override

@@ -90,12 +90,12 @@ public class LyjVolunteerController {
      */
     @ApiOperation(value = "新增义工")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "userid", dataType = "String", value = "新增义工的用户唯一标识", required = true)
+            @ApiImplicitParam(paramType = "body", name = "lyjVolunteer", dataType = "LyjVolunteer", value = "新增义工", required = true)
     })
     @PostMapping()
-    public CommonResponse addLyjVolunteer(@RequestParam("userid")String userid ){
+    public CommonResponse addLyjVolunteer(@RequestBody LyjVolunteer lyjVolunteer ){
         try{
-            return new CommonResponse(lyjVolunteerService.saveVolunteer(userid),200);
+            return new CommonResponse(lyjVolunteerService.saveVolunteer(lyjVolunteer.getLyjUserId()),200);
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看",500);
@@ -131,10 +131,10 @@ public class LyjVolunteerController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "volunteerId", dataType = "Integer", value = "需要删除的义工ID", required = true)
     })
-    @DeleteMapping("/{VolunteerId}")
-    public CommonResponse removeVolunteer(@PathVariable("volunteerId") Integer volunteerId) {
+    @DeleteMapping("/{lyjVolunteerId}")
+    public CommonResponse removeVolunteer(@PathVariable("lyjVolunteerId") Integer lyjVolunteerId) {
         try{
-            lyjVolunteerService.removeVolunteer(volunteerId);
+            lyjVolunteerService.removeVolunteer(lyjVolunteerId);
             return new CommonResponse(200);
         }catch (Exception e){
             e.printStackTrace();

@@ -2,10 +2,8 @@ package com.feng.oldfriend.controller;
 
 import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjApplyChange;
-import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementApply;
 import com.feng.oldfriend.service.LyjRequirementApplyService;
-import com.feng.oldfriend.service.impl.LyjRequirementApplyServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -13,8 +11,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -201,6 +197,22 @@ public class LyjRequirementApplyController {
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
+    }
+
+    @ApiOperation(value = "删除需求申请")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "Id", dataType = "Integer", value = "需要删除的申请ID", required = true)
+    })
+    @DeleteMapping("/{Id}")
+    public CommonResponse removeRequirementApply(@PathVariable("Id") Integer Id) {
+        try{
+            lyjRequirementApplyService.delRequirementApply(Id);
+            return new CommonResponse(200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+
     }
 
     @ApiOperation(value = "更新需求的状态")

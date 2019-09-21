@@ -13,9 +13,9 @@ public interface LyjVolunteerService {
      * create time: 2019/8/5 21:25
      * description: 获得所有的义工
      */
-    List<LyjVolunteer> getAllVolunteer();
+    List<LyjVolunteer> getAllVolunteer(String searchText,Integer state);
 
-    Integer getAllVolunteerCount();
+    Integer getAllVolunteerCount(String searchText,Integer state);
 
     /**
      * create by: yangchenxiao

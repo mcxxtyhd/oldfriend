@@ -72,10 +72,14 @@
         <table tableName="lyj_user" schema=""/>
         <table tableName="lyj_volunteer" schema=""/>
         -->
-        <table tableName="sys_permission" />
-        <table tableName="sys_role" />
-        <table tableName="sys_rolepermission_relation" />
-        <table tableName="sys_roleuser_relation" />
+        <!--<table tableName="sys_permission" />-->
+        <!--<table tableName="sys_role" />-->
+        <!--<table tableName="sys_rolepermission_relation" />-->
+        <!--<table tableName="sys_roleuser_relation" />-->
+
+
+        <!--<table tableName="lyj_companyuser_relation" />-->
+        <!--<table tableName="lyj_companyrequirement_relation" />-->
 
 
     </context>

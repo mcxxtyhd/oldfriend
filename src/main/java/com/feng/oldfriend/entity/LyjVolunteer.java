@@ -4,6 +4,16 @@ import java.io.Serializable;
 
 public class LyjVolunteer implements Serializable {
 
+    private Integer lyjUserApplystate;
+
+    public Integer getLyjUserApplystate() {
+        return lyjUserApplystate;
+    }
+
+    public void setLyjUserApplystate(Integer lyjUserApplystate) {
+        this.lyjUserApplystate = lyjUserApplystate;
+    }
+
     private String lyjUsername;
 
     public String getLyjUsername() {

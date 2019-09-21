@@ -2,8 +2,59 @@ package com.feng.oldfriend.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class LyjRequirement implements Serializable {
+
+    private String lyjCompanyName;
+
+    public String getLyjCompanyName() {
+        return lyjCompanyName;
+    }
+
+    public void setLyjCompanyName(String lyjCompanyName) {
+        this.lyjCompanyName = lyjCompanyName;
+    }
+
+    private Integer lyjRequirementApplyednum;
+
+    public Integer getLyjRequirementApplyednum() {
+        return lyjRequirementApplyednum;
+    }
+
+    public void setLyjRequirementApplyednum(Integer lyjRequirementApplyednum) {
+        this.lyjRequirementApplyednum = lyjRequirementApplyednum;
+    }
+
+    private Integer lyjRequirementProcess;
+
+    public Integer getLyjRequirementProcess() {
+        return lyjRequirementProcess;
+    }
+
+    public void setLyjRequirementProcess(Integer lyjRequirementProcess) {
+        this.lyjRequirementProcess = lyjRequirementProcess;
+    }
+
+    private Integer lyjRequirementNum;
+
+    public Integer getLyjRequirementNum() {
+        return lyjRequirementNum;
+    }
+
+    public void setLyjRequirementNum(Integer lyjRequirementNum) {
+        this.lyjRequirementNum = lyjRequirementNum;
+    }
+
+    private Integer lyjRequirementState;
+
+    public Integer getLyjRequirementState() {
+        return lyjRequirementState;
+    }
+
+    public void setLyjRequirementState(Integer lyjRequirementState) {
+        this.lyjRequirementState = lyjRequirementState;
+    }
 
     private String lyjRequirementDetailadd;
 
@@ -13,6 +64,31 @@ public class LyjRequirement implements Serializable {
 
     public void setLyjRequirementDetailadd(String lyjRequirementDetailadd) {
         this.lyjRequirementDetailadd = lyjRequirementDetailadd;
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/10 18:46
+     * description: 所有的类型
+     */
+    private List<LyjRequirementType> allTypes;
+
+    public List<LyjRequirementType> getAllTypes() {
+        return allTypes;
+    }
+
+    public void setAllTypes(List<LyjRequirementType> allTypes) {
+        this.allTypes = allTypes;
+    }
+
+    private List<Integer> allTypeIds;
+
+    public List<Integer> getAllTypeIds() {
+        return allTypeIds;
+    }
+
+    public void setAllTypeIds(List<Integer> allTypeIds) {
+        this.allTypeIds = allTypeIds;
     }
 
     /**

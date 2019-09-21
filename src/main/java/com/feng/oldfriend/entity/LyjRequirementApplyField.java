@@ -36,6 +36,24 @@ public class LyjRequirementApplyField {
     private Integer  lyj_requirement_reward;
     private Integer lyj_requirement_volunteerperfer;
     private List<LyjRequirementType> allTypes;
+    private String lyj_user_phone;
+    private Integer lyj_user_avestar;
+
+    public Integer getLyj_user_avestar() {
+        return lyj_user_avestar;
+    }
+
+    public void setLyj_user_avestar(Integer lyj_user_avestar) {
+        this.lyj_user_avestar = lyj_user_avestar;
+    }
+
+    public String getLyj_user_phone() {
+        return lyj_user_phone;
+    }
+
+    public void setLyj_user_phone(String lyj_user_phone) {
+        this.lyj_user_phone = lyj_user_phone;
+    }
 
     public List<LyjRequirementType> getAllTypes() {
         return allTypes;

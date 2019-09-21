@@ -1,5 +1,6 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjApplyChange;
 import com.feng.oldfriend.entity.LyjRequirementApply;
@@ -145,7 +146,6 @@ public class LyjRequirementApplyController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
-            @ApiImplicitParam(paramType = "query", name = "applyid", dataType = "Integer", value = "需求ID", required = true),
             @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求状态", required = true)
     })
     @GetMapping("/Status")
@@ -199,6 +199,27 @@ public class LyjRequirementApplyController {
         }
     }
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求申请的状态
+     */
+    @ApiOperation(value = "批量更新需求申请的状态")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "state", dataType = "Integer", value = "所要更改的状态", required = true),
+            @ApiImplicitParam(paramType = "query", name = "ids", dataType = "List<Integer>", value = "需求ID集合", required = true)
+    })
+    @PutMapping("/Batch")
+    public CommonResponse batchUpdateApplyState(@RequestBody BatchUserState datas) {
+        try {
+            lyjRequirementApplyService.batchUpdateApplyState(datas);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
     @ApiOperation(value = "删除需求申请")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "Id", dataType = "Integer", value = "需要删除的申请ID", required = true)
@@ -215,17 +236,16 @@ public class LyjRequirementApplyController {
 
     }
 
-    @ApiOperation(value = "更新需求的状态")
+    @ApiOperation(value = "更新需求申请的状态")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "applyId", dataType = "Integer", value = "需求申请的ID", required = true),
-            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "更新的状态码", required = true)
+            @ApiImplicitParam(paramType = "query", name = "LyjRequirementApplyid", dataType = "Integer", value = "需求申请的ID", required = true),
+            @ApiImplicitParam(paramType = "query", name = "LyjRequirementApplystate", dataType = "Integer", value = "更新的状态码", required = true)
     })
     @PostMapping("/applyStatus")
-    public CommonResponse updateRequirementApplyStatus(@RequestParam(value="applyId",required = true) Integer applyId,
-                                                       @RequestParam(value="status",required = true) Integer status) {
+    public CommonResponse updateRequirementApplyStatus(@RequestBody LyjRequirementApply lyjRequirementApply){
 
         try{
-            lyjRequirementApplyService.updateRequirementApplyStatus(applyId,status);
+            lyjRequirementApplyService.updateRequirementApplyStatus(lyjRequirementApply.getLyjRequirementApplyid(),lyjRequirementApply.getLyjRequirementApplystate());
             return new CommonResponse(200);
         }catch (Exception e){
             e.printStackTrace();
@@ -241,7 +261,7 @@ public class LyjRequirementApplyController {
     public CommonResponse updateRequirementApplyStatusNew(@RequestBody LyjApplyChange lyjApplyChange) {
 
         try{
-            lyjRequirementApplyService.updateRequirementApplyStatus(Integer.valueOf(lyjApplyChange.getApplyId()),Integer.valueOf(lyjApplyChange.getStatus()));
+            int result=lyjRequirementApplyService.updateRequirementApplyStatus(Integer.valueOf(lyjApplyChange.getApplyId()),Integer.valueOf(lyjApplyChange.getStatus()));
             return new CommonResponse(200);
         }catch (Exception e){
             e.printStackTrace();

@@ -2,15 +2,18 @@ package com.feng.oldfriend.service.impl;
 
 import com.feng.oldfriend.Utils.MathUtils;
 import com.feng.oldfriend.Utils.Md5Util;
-import com.feng.oldfriend.dao.LyjRequirementApplyMapper;
-import com.feng.oldfriend.dao.LyjUserMapper;
+import com.feng.oldfriend.VO.BatchUserState;
+import com.feng.oldfriend.dao.*;
+import com.feng.oldfriend.entity.LyjCompany;
 import com.feng.oldfriend.entity.LyjRequirementApply;
 import com.feng.oldfriend.entity.LyjUser;
+import com.feng.oldfriend.service.LyjCompanyService;
 import com.feng.oldfriend.service.LyjUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service("LyjUserService")
@@ -21,6 +24,28 @@ public class LyjUserServiceImpl implements LyjUserService {
 
     @Autowired
     private LyjRequirementApplyMapper lyjRequirementApplyMapper;
+
+    @Autowired
+    private SysRoleuserRelationMapper sysRoleuserRelationMapper;
+
+    @Autowired
+    private SysRolepermissionRelationMapper sysRolepermissionRelationMapper;
+
+    @Autowired
+    private SysPermissionMapper sysPermissionMapper;
+
+    @Autowired
+    private LyjCompanyService lyjCompanyService;
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 21:17
+     * description: 批量更新用户的审批状态
+     */
+    @Override
+    public void batchUpdateUserStatus(BatchUserState datas) {
+        lyjUserMapper.batchUpdateUserStatus(datas);
+    }
 
     /**
      * create by: yangchenxiao
@@ -57,15 +82,49 @@ public class LyjUserServiceImpl implements LyjUserService {
             if(null!=singleApply.getLyjRequirementApplystar())allStars.add(singleApply.getLyjRequirementApplystar());
         }
 
+        //這個是時長  個人得分 年龄
         user.setAllDuration(AllDuration);
         user.setPersonalStar(MathUtils.convertToStar(allStars));
         user.setLyjUserAge(MathUtils.getAgeByBirth(user.getLyjUserBirthday()));
+
+        //下面这个是放权限
+        //这个是找角色
+        List<String> roleIds=sysRoleuserRelationMapper.selectRoleIdsByUUID(user.getLyjUserUuid());
+
+        List<String> permissionIds=sysRolepermissionRelationMapper.selectPermissionidsByRoleids(roleIds);
+        //最后是根据ID找到名称
+        List<String> permissionNames=sysPermissionMapper.selectByPermissionids(permissionIds);
+
+        HashSet allPermissions=new HashSet();
+        for(String permission:permissionNames){
+            allPermissions.add(permission);
+        }
+        user.setPermissions(allPermissions);
+
+        //这个是所属机构
+        user.setCompanyIds(lyjCompanyService.getCompanyIdsByUUID(user.getLyjUserUuid()));
+
         return user;
     }
 
     @Override
     public Integer getUsersCount(String searchText) {
         return lyjUserMapper.getUsersCount(searchText);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/8 14:37
+     * description: 根据用户状态搜索用户
+     */
+    @Override
+    public List<LyjUser> getUsersByStatus(String searchText, String status) throws Exception {
+        return lyjUserMapper.getUsersByStatus(searchText,status);
+    }
+
+    @Override
+    public Integer getUsersCountByStatus(String searchText, String status) {
+        return lyjUserMapper.getUsersCountByStatus(searchText,status);
     }
 
     /**
@@ -82,6 +141,22 @@ public class LyjUserServiceImpl implements LyjUserService {
     public String saveUser(LyjUser user) {
         //根据手机号码和密码生成用户唯一标识
         String encryptUserInfo= Md5Util.string2MD5(user.getLyjUserPhone()+user.getLyjUserPassword());
+        user.setLyjUserUuid(encryptUserInfo);
+
+        lyjUserMapper.insert(user);
+
+        return encryptUserInfo;
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/3 21:56
+     * description: 根据openid生成用户
+     */
+    @Override
+    public String saveWxUser(LyjUser user) {
+        //根据手机号码和密码生成用户唯一标识
+        String encryptUserInfo= Md5Util.string2MD5(user.getLyjUserOpenid());
         user.setLyjUserUuid(encryptUserInfo);
 
         lyjUserMapper.insert(user);
@@ -111,6 +186,26 @@ public class LyjUserServiceImpl implements LyjUserService {
 
     /**
      * create by: yangchenxiao
+     * create time: 2019/9/6 21:30
+     * description: 根据唯一标识找到用户的所有权限
+     */
+    @Override
+    public HashSet<String> getUserPermissionByUUID(String userUUID) {
+        return null;
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/3 21:51
+     * description: 根据openid找到用户
+     */
+    @Override
+    public LyjUser getUserByOpenid(String openid) throws Exception {
+        return lyjUserMapper.findUserByOpenId(openid);
+    }
+
+    /**
+     * create by: yangchenxiao
      * create time: 2019/8/12 21:39
      * description: 根据手机号检查是否重复
      */
@@ -126,8 +221,53 @@ public class LyjUserServiceImpl implements LyjUserService {
         lyjUserMapper.updateByPrimaryKey(user);
     }
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/8 15:25
+     * description: 修改用户状态
+     */
+    @Override
+    public void updateUserStatus(LyjUser user) {
+        lyjUserMapper.updateStatus(user);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 20:57
+     * description: 根据UUID和密码找到用户
+     */
+    @Override
+    public LyjUser findUserByUuidAndPassword(LyjUser user) {
+        return lyjUserMapper.findUserByUuidAndPassword(user);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/8 16:57
+     * description: 修改用户密码
+     */
+    @Override
+    public void updateUserPassword(LyjUser user) {
+        lyjUserMapper.updateUserPassword(user);
+    }
+
     @Override
     public void removeUser(Integer id) {
         lyjUserMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/9 21:35
+     * description: 根据机构查询用户
+     */
+    @Override
+    public List<LyjUser> getUsersByCompany(Integer state,Integer companyId,String searchText) {
+        return lyjUserMapper.getUsersByCompany(state,companyId,searchText);
+    }
+
+    @Override
+    public Integer getUsersByCompanyCount(Integer state,Integer companyId,String searchText) {
+        return lyjUserMapper.getUsersByCompanyCount(state,companyId,searchText);
     }
 }

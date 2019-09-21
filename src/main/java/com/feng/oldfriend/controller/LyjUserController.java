@@ -1,5 +1,7 @@
 package com.feng.oldfriend.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.dao.LyjUserMapper;
 import com.feng.oldfriend.entity.LyjUser;
@@ -43,8 +45,8 @@ public class LyjUserController {
     @GetMapping()
     public CommonResponse getUserBySearch(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                           @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                          @RequestParam(value = "searchText", required = false) String searchText){
-        try{
+                                          @RequestParam(value = "searchText", required = false) String searchText) {
+        try {
             pageNo = pageNo == null ? 1 : pageNo;
             pageSize = pageSize == null ? 10 : pageSize;
 
@@ -53,10 +55,38 @@ public class LyjUserController {
             //判断是否需要根据需求类型ID进行查询
             PageInfo pageInfo = new PageInfo(lyjUserService.getUsers(searchText));
 
-            return new CommonResponse(pageInfo, 200,lyjUserService.getUsersCount(searchText));
-        }catch (Exception e){
+            return new CommonResponse(pageInfo, 200, lyjUserService.getUsersCount(searchText));
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    @ApiOperation(value = "根据用户状态查询所有的用户")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "搜索内容", required = false),
+            @ApiImplicitParam(paramType = "query", name = "userApplystate", dataType = "userApplystate", value = "用户的状态", required = false),
+    })
+    @GetMapping("/Status")
+    public CommonResponse getUserBySearchStatus(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                                @RequestParam(value = "searchText", required = false) String searchText,
+                                                @RequestParam(value = "userApplystate", required = false) String userApplystate) {
+        try {
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? 10 : pageSize;
+
+            PageHelper.startPage(pageNo, pageSize);
+
+            //判断是否需要根据需求类型ID进行查询
+            PageInfo pageInfo = new PageInfo(lyjUserService.getUsersByStatus(searchText, userApplystate));
+
+            return new CommonResponse(pageInfo, 200, lyjUserService.getUsersCountByStatus(searchText, userApplystate));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -66,12 +96,12 @@ public class LyjUserController {
     })
     @GetMapping("/{userId}")
     public CommonResponse getUserById(@PathVariable("userId") Integer userId) {
-        try{
-            LyjUser lyjUser=lyjUserService.getUserById(userId);
+        try {
+            LyjUser lyjUser = lyjUserService.getUserById(userId);
             return new CommonResponse(lyjUser, 200);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -88,13 +118,33 @@ public class LyjUserController {
             @ApiImplicitParam(paramType = "body", name = "user", dataType = "User", value = "用户信息", required = true)
     })
     @PostMapping("/register")
-    public CommonResponse addUser(@RequestBody LyjUser newUser){
-        try{
-            String encryptUserInfo=lyjUserService.saveUser(newUser);
-            return new CommonResponse(encryptUserInfo,200);
-        }catch (Exception e){
+    public CommonResponse addUser(@RequestBody LyjUser newUser) {
+        try {
+            String encryptUserInfo = lyjUserService.saveUser(newUser);
+            return new CommonResponse(encryptUserInfo, 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/3 21:55
+     * description: 根据openid生成用户
+     */
+    @ApiOperation(value = "根据openid生成用户")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "user", dataType = "User", value = "用户信息(只包含openid)", required = true)
+    })
+    @PostMapping("/wxuser")
+    public CommonResponse addWxUser(@RequestBody LyjUser newUser) {
+        try {
+            String encryptUserInfo = lyjUserService.saveWxUser(newUser);
+            return new CommonResponse(encryptUserInfo, 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -110,12 +160,33 @@ public class LyjUserController {
     })
     @GetMapping("/login")
     public CommonResponse loginUser(@RequestParam(value = "phone", required = true) String phone,
-                                    @RequestParam(value = "password", required = true) String password){
-        try{
-            return new CommonResponse(lyjUserService.loginUser(phone,password),200);
-        }catch (Exception e){
+                                    @RequestParam(value = "password", required = true) String password) {
+        try {
+            return new CommonResponse(lyjUserService.loginUser(phone, password), 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/8/11 16:38
+     * description: 后台 用户登录  成功返回用户信息
+     */
+    @ApiOperation(value = "后台用户登录")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "user", dataType = "LyjUser", value = "用户信息(包含手机号[手机号就是userName]和密码)", required = true)
+    })
+    @PostMapping("/loginHT")
+    public CommonResponse loginUserHT(@RequestBody LyjUser user) {
+        try {
+            //返回uuid
+            return new CommonResponse(lyjUserService.loginUser(user.getLyjUserPhone(), user.getLyjUserPassword()).getLyjUserUuid(), 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -124,12 +195,26 @@ public class LyjUserController {
             @ApiImplicitParam(paramType = "query", name = "userUUID", dataType = "String", value = "需要查找用户的UUID", required = true)
     })
     @GetMapping("/userinfo")
-    public CommonResponse getUserInfoByUUID(@RequestParam(value = "userUUID", required = true) String userUUID){
-        try{
-            return new CommonResponse(lyjUserService.getUserByInfo(userUUID),200);
-        }catch (Exception e){
+    public CommonResponse getUserInfoByUUID(@RequestParam(value = "userUUID", required = true) String userUUID) {
+        try {
+            return new CommonResponse(lyjUserService.getUserByInfo(userUUID), 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    @ApiOperation(value = "根据openid找到用户")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "userUUID", dataType = "String", value = "需要查找用户的openid", required = true)
+    })
+    @GetMapping("/userinfo/openid")
+    public CommonResponse getUserInfoByOpenid(@RequestParam(value = "openid", required = true) String openid) {
+        try {
+            return new CommonResponse(lyjUserService.getUserByOpenid(openid), 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -138,13 +223,13 @@ public class LyjUserController {
             @ApiImplicitParam(paramType = "query", name = "phone", dataType = "String", value = "手机号", required = true)
     })
     @GetMapping("/checkphone")
-    public CommonResponse checkPhone(@RequestParam(value = "phone", required = true) String phone){
-        try{
-            boolean result=lyjUserService.checkPhone(phone);
-            return new CommonResponse(result,200);
-        }catch (Exception e){
+    public CommonResponse checkPhone(@RequestParam(value = "phone", required = true) String phone) {
+        try {
+            boolean result = lyjUserService.checkPhone(phone);
+            return new CommonResponse(result, 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -175,9 +260,104 @@ public class LyjUserController {
     })
     @PutMapping()
     public CommonResponse updateUser(@RequestBody LyjUser lyjUser) {
+        try {
+            lyjUserService.updateUser(lyjUser);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
 
-        lyjUserService.updateUser(lyjUser);
-        return new CommonResponse(200);
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/28 14:55
+     * description: 更新用户审批状态
+     */
+    @ApiOperation(value = "更新用户审批状态")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "uuid", dataType = "String", value = "用户uuid", required = true),
+            @ApiImplicitParam(paramType = "query", name = "lyjUserApplystate", dataType = "String", value = "用户审批状态(1:初始状态，2:待审核，3:审核通过，4:审核驳回)", required = true)
+    })
+    @PutMapping("/Status")
+    public CommonResponse updateUserStatus(@RequestBody LyjUser lyjUser) {
+
+        try {
+            lyjUserService.updateUserStatus(lyjUser);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/7/28 14:55
+     * description: 更新用户审批状态
+     */
+    @ApiOperation(value = "更新用户审批状态")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "state", dataType = "Integer", value = "所要更改的状态", required = true),
+            @ApiImplicitParam(paramType = "query", name = "uuids", dataType = "List<String>", value = "用户UUID集合", required = true)
+    })
+    @PutMapping("/Batch")
+    public CommonResponse batchUpdateUserStatus(@RequestBody BatchUserState datas) {
+
+        try {
+            lyjUserService.batchUpdateUserStatus(datas);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 20:56
+     * description: 根据UUID和密码找到用户
+     */
+    @ApiOperation(value = "根据UUID和密码找到用户")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "lyjUserUuid", dataType = "String", value = "用户uuid", required = true),
+            @ApiImplicitParam(paramType = "query", name = "lyjUserPassword", dataType = "String", value = "修改的密码", required = true)
+    })
+    @PostMapping("/OldPassword")
+    public CommonResponse findUserByUuidAndPassword(@RequestBody LyjUser lyjUser) {
+        try {
+            LyjUser data=lyjUserService.findUserByUuidAndPassword(lyjUser);
+            if(data!=null){
+                return new CommonResponse(data,200);
+            }else
+            {
+                return new CommonResponse("密码错误",500);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/8 16:54
+     * description: 修改密码
+     */
+    @ApiOperation(value = "修改密码")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "lyjUserUuid", dataType = "String", value = "用户uuid", required = true),
+            @ApiImplicitParam(paramType = "query", name = "lyjUserPassword", dataType = "String", value = "修改的密码", required = true)
+    })
+    @PutMapping("/Password")
+    public CommonResponse updateUserPassword(@RequestBody LyjUser lyjUser) {
+        try {
+            lyjUserService.updateUserPassword(lyjUser);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
     }
 
     /**
@@ -191,12 +371,12 @@ public class LyjUserController {
     })
     @DeleteMapping("/{userId}")
     public CommonResponse removeUser(@PathVariable("userId") Integer userId) {
-        try{
+        try {
             lyjUserService.removeUser(userId);
             return new CommonResponse(200);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
 
     }

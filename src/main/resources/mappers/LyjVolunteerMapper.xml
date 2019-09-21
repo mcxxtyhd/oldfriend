@@ -9,6 +9,7 @@
     <id column="lyj_volunteer_id" property="lyjVolunteerId" jdbcType="INTEGER" />
     <result column="lyj_user_id" property="lyjUserId" jdbcType="VARCHAR" />
     <result column="lyj_user_name" property="lyjUsername" jdbcType="VARCHAR" />
+    <result column="lyj_user_applystate" property="lyjUserApplystate" jdbcType="INTEGER" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     <!--
@@ -54,15 +55,49 @@
 
 
   <select id="selectAll" resultMap="BaseResultMap" >
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+
     select a.lyj_volunteer_id,
     a.lyj_user_id,
-    b.lyj_user_name
+    b.lyj_user_name,
+    b.lyj_user_applystate
     from lyj_volunteer a
     left join lyj_user b on b.lyj_user_uuid=a.lyj_user_id
+    where 1=1
+    <if test="searchText!=null and searchText!=''">
+      and b.lyj_user_name like #{pattern}
+    </if>
+    <if test="status!=null and status!=0 ">
+      and b.lyj_user_applystate =#{status}
+    </if>
   </select>
 
   <select id="selectAllCount" resultType="java.lang.Integer" >
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+
     select count(1)
-    from lyj_volunteer
+    from lyj_volunteer a
+    left join lyj_user b on b.lyj_user_uuid=a.lyj_user_id
+    where 1=1
+    <if test="searchText!=null and searchText!=''">
+      and b.lyj_user_name like #{pattern}
+    </if>
+    <if test="status!=null and status!=0 ">
+      and b.lyj_user_applystate =#{status}
+    </if>
   </select>
 </mapper>

@@ -1,9 +1,8 @@
 package com.feng.oldfriend.service;
 
-import com.feng.oldfriend.entity.LyjRequirement;
-import com.feng.oldfriend.entity.LyjRequirementType;
-import com.feng.oldfriend.entity.LyjRequirementVO;
-import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
+import com.feng.oldfriend.VO.BatchUserState;
+import com.feng.oldfriend.entity.*;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -62,5 +61,28 @@ public interface LyjRequirementService {
 
     void updateRequirement(LyjRequirementVO lyjRequirement);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求的状态
+     */
+    void batchUpdateRequirementState(@RequestBody BatchUserState datas);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求流程的状态
+     */
+    void batchUpdateRequirementProcess(@RequestBody BatchUserState datas);
+
     void removeRequirement(Integer id);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/9 21:34
+     * description: 根据机构查询需求
+     */
+    List<LyjRequirement> getRequirementsByCompany(Integer state,Integer companyId,String searchText);
+
+    Integer getRequirementsCount(Integer state,Integer companyId,String searchText);
 }

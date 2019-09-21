@@ -1,5 +1,6 @@
 package com.feng.oldfriend.controller;
 
+import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementType;
@@ -174,5 +175,42 @@ public class LyjRequirementController {
             return new CommonResponse("后台程序出错，请联系管理员查看",500);
         }
 
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求的状态
+     */
+    @ApiOperation(value = "更新需求审批状态")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "state", dataType = "Integer", value = "所要更改的状态", required = true),
+            @ApiImplicitParam(paramType = "query", name = "ids", dataType = "List<Integer>", value = "需求ID集合", required = true)
+    })
+    @PutMapping("/Batch")
+    public CommonResponse batchUpdateRequirementState(@RequestBody BatchUserState datas) {
+        try {
+            lyjRequirementService.batchUpdateRequirementState(datas);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    @ApiOperation(value = "更新需求流程状态")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "state", dataType = "Integer", value = "所要更改的状态", required = true),
+            @ApiImplicitParam(paramType = "query", name = "ids", dataType = "List<Integer>", value = "需求ID集合", required = true)
+    })
+    @PutMapping("/BatchProcess")
+    public CommonResponse batchUpdateRequirementProcess(@RequestBody BatchUserState datas) {
+        try {
+            lyjRequirementService.batchUpdateRequirementProcess(datas);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
     }
 }

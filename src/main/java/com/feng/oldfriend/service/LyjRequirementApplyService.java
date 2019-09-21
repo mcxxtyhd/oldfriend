@@ -1,5 +1,6 @@
 package com.feng.oldfriend.service;
 
+import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementApply;
 import com.feng.oldfriend.entity.LyjRequirementApplyField;
@@ -37,7 +38,7 @@ public interface LyjRequirementApplyService {
      * create time: 2019/8/18 11:29
      * description: 根据需求ID或状态查询需求申请的数据
      */
-    List<LyjRequirementApplyField> getRequirementByIdStatus(Integer applyid, Integer status);
+    List<LyjRequirementApplyField> getRequirementByIdStatus(Integer applyid, Integer status) throws Exception;
 
 
     void saveRequirementApply(LyjRequirementApply lyjRequirementApply);
@@ -49,6 +50,13 @@ public interface LyjRequirementApplyService {
      */
     void updateRequirementApply(LyjRequirementApply LyjRequirementApply);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求申请的状态
+     */
+    void batchUpdateApplyState(BatchUserState datas) throws Exception;
+
     void delRequirementApply(Integer id);
 
     /**
@@ -56,7 +64,7 @@ public interface LyjRequirementApplyService {
      * create time: 2019/8/19 19:53
      * description: 根据需求ID和状态码更改
      */
-    void updateRequirementApplyStatus(Integer applyId,Integer status);
+    Integer updateRequirementApplyStatus(Integer applyId,Integer status)  throws Exception;
 
     /**
      * create by: yangchenxiao

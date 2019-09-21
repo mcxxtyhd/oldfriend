@@ -255,7 +255,8 @@
         lyj_requirement_maplocation,
         lyj_requirement_reward,
         lyj_requirement_volunteerperfer,
-        lyj_user.lyj_user_name
+        lyj_user.lyj_user_name,
+        lyj_user.lyj_user_phone
         FROM
         lyj_requirement_apply LEFT JOIN
         lyj_requirement on
@@ -270,5 +271,16 @@
             and lyj_requirement_applyrequirementid = #{applyid}
         </if>
     </select>
+
+    <!--批量更新需求申请的状态-->
+    <update id="batchUpdateApplyState">
+        update lyj_requirement_apply
+        set lyj_requirement_applystate=#{state}
+        where lyj_requirement_applyid in
+        <foreach collection="ids" item="single" index="index"
+                 open=" (" close=")" separator=",">
+            #{single}
+        </foreach>
+    </update>
 
 </mapper>

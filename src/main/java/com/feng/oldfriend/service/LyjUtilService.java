@@ -1,5 +1,6 @@
 package com.feng.oldfriend.service;
 
+import com.feng.oldfriend.entity.LyjUser;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -17,5 +18,12 @@ public interface LyjUtilService {
     String saveFile(MultipartFile file) throws Exception;
 
     String registerCheck(String phoneNumber) throws Exception;
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/3 21:08
+     * description: 微信登录 返回openid 以及 session_key的加密值
+     */
+    LyjUser wxLogin(String code) throws Exception;
 
 }

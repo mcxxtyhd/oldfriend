@@ -2,10 +2,53 @@ package com.feng.oldfriend.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class LyjUser implements Serializable {
 
+    //所属机构
+    private List<Integer> companyIds;
+
+    public List<Integer> getCompanyIds() {
+        return companyIds;
+    }
+
+    public void setCompanyIds(List<Integer> companyIds) {
+        this.companyIds = companyIds;
+    }
+
+    private String lyjUserApplystate;
+
+    private Integer lyjUserAllduration;
+
+    public String getLyjUserApplystate() {
+        return lyjUserApplystate;
+    }
+
+    public void setLyjUserApplystate(String lyjUserApplystate) {
+        this.lyjUserApplystate = lyjUserApplystate;
+    }
+
+    public Integer getLyjUserAllduration() {
+        return lyjUserAllduration;
+    }
+
+    public void setLyjUserAllduration(Integer lyjUserAllduration) {
+        this.lyjUserAllduration = lyjUserAllduration;
+    }
+
+    private Set<String> permissions;
+
     private String personalStar;
+
+    public Set<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<String> permissions) {
+        this.permissions = permissions;
+    }
 
     private Integer allDuration;
 

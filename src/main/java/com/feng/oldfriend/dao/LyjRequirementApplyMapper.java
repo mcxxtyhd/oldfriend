@@ -1,5 +1,6 @@
 package com.feng.oldfriend.dao;
 
+import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementApply;
 import com.feng.oldfriend.entity.LyjRequirementApplyField;
@@ -98,6 +99,13 @@ public interface LyjRequirementApplyMapper {
      * description: 根据需求ID和状态码更改
      */
     void updateRequirementApplyStatus(@Param("applyId")Integer applyId, @Param("status")Integer status);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求申请的状态
+     */
+    void batchUpdateApplyState(BatchUserState datas);
 
     /**
      * create by: yangchenxiao

@@ -1,16 +1,16 @@
 package com.feng.oldfriend.service.impl;
 
+import com.feng.oldfriend.VO.BatchUserState;
+import com.feng.oldfriend.dao.LyjCompanyrequirementRelationMapper;
 import com.feng.oldfriend.dao.LyjRequirementMapper;
 import com.feng.oldfriend.dao.LyjRequirementtypeRelationMapper;
-import com.feng.oldfriend.entity.LyjRequirement;
-import com.feng.oldfriend.entity.LyjRequirementType;
-import com.feng.oldfriend.entity.LyjRequirementVO;
-import com.feng.oldfriend.entity.LyjRequirementtypeRelation;
+import com.feng.oldfriend.entity.*;
 import com.feng.oldfriend.service.LyjRequirementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +21,8 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
     private LyjRequirementMapper lyjRequirementMapper;
     @Autowired
     private LyjRequirementtypeRelationMapper lyjRequirementtypeRelationMapper;
+    @Autowired
+    private LyjCompanyrequirementRelationMapper lyjCompanyrequirementRelationMapper;
 
     /**
      * create by: yangchenxiao
@@ -118,6 +120,9 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
                 lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId,single));
             }
         }
+
+        //3、最后再增加机构关系表
+        lyjCompanyrequirementRelationMapper.insert(new LyjCompanyrequirementRelation(lyjRequirementVO.getLyjCompanyId(),requirementId));
     }
 
     @Override
@@ -138,6 +143,26 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
         }
     }
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求的状态
+     */
+    @Override
+    public void batchUpdateRequirementState(BatchUserState datas) {
+        lyjRequirementMapper.batchUpdateRequirementState(datas);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求流程的状态
+     */
+    @Override
+    public void batchUpdateRequirementProcess(BatchUserState datas) {
+        lyjRequirementMapper.batchUpdateRequirementProcess(datas);
+    }
+
     @Override
     @Transactional
     public void removeRequirement(Integer id) {
@@ -146,5 +171,33 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
 
         //2、删除该需求数据
         lyjRequirementMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/9 21:34
+     * description: 根据机构查询需求
+     */
+    @Override
+    public List<LyjRequirement> getRequirementsByCompany(Integer state,Integer companyId, String searchText) {
+        List<LyjRequirement> datas=lyjRequirementMapper.getRequirementsByCompany(state,companyId,searchText);
+
+        //将需求类型的id加入
+        for(LyjRequirement single:datas){
+            List<Integer> typeids=new ArrayList<>();
+
+            List<LyjRequirementType> currentdata=lyjRequirementMapper.getTypesById(single.getLyjRequirementId());
+            for(LyjRequirementType onedata:currentdata){
+                typeids.add(onedata.getLyjRequirementTypeid());
+            }
+            single.setAllTypeIds(typeids);
+            single.setAllTypes(currentdata);
+        }
+        return datas;
+    }
+
+    @Override
+    public Integer getRequirementsCount(Integer state,Integer companyId, String searchText) {
+        return lyjRequirementMapper.getRequirementsByCompanyCount(state,companyId,searchText);
     }
 }

@@ -23,8 +23,10 @@
     <result column="lyj_user_birthday" property="lyjUserBirthday" jdbcType="TIMESTAMP" />
     <result column="lyj_user_password" property="lyjUserPassword" jdbcType="VARCHAR" />
     <result column="lyj_user_uuid" property="lyjUserUuid" jdbcType="VARCHAR" />
-
     <result column="lyj_volunteer_id" property="lyjVolunteerId" jdbcType="INTEGER" />
+
+    <result column="lyj_user_applystate" property="lyjUserApplystate" jdbcType="VARCHAR" />
+    <result column="lyj_user_allduration" property="lyjUserAllduration" jdbcType="INTEGER" />
 
 
   </resultMap>
@@ -45,13 +47,13 @@
       lyj_user_gender, lyj_user_location, lyj_user_age,
       lyj_user_country, lyj_user_creditid, lyj_user_phone,
       lyj_user_livingplace, lyj_user_workplace, lyj_user_creditpositive,
-      lyj_user_creditnegative,lyj_user_rewards,lyj_user_birthday,lyj_user_password,lyj_user_uuid)
+      lyj_user_creditnegative,lyj_user_rewards,lyj_user_birthday,lyj_user_password,lyj_user_uuid,lyj_user_applystate,lyj_user_allduration)
     values (#{lyjUserId,jdbcType=INTEGER}, #{lyjUserOpenid,jdbcType=VARCHAR}, #{lyjUserName,jdbcType=VARCHAR},
       #{lyjUserGender,jdbcType=INTEGER}, #{lyjUserLocation,jdbcType=VARCHAR}, #{lyjUserAge,jdbcType=INTEGER},
       #{lyjUserCountry,jdbcType=VARCHAR}, #{lyjUserCreditid,jdbcType=VARCHAR}, #{lyjUserPhone,jdbcType=VARCHAR},
       #{lyjUserLivingplace,jdbcType=VARCHAR}, #{lyjUserWorkplace,jdbcType=VARCHAR}, #{lyjUserCreditpositive,jdbcType=VARCHAR},
       #{lyjUserCreditnegative,jdbcType=VARCHAR},#{lyjUserRewards,jdbcType=INTEGER},#{lyjUserBirthday,jdbcType=DATE},
-      #{lyjUserPassword,jdbcType=VARCHAR}, #{lyjUserUuid,jdbcType=VARCHAR}
+      #{lyjUserPassword,jdbcType=VARCHAR}, #{lyjUserUuid,jdbcType=VARCHAR},#{lyjUserApplystate,jdbcType=VARCHAR}, #{lyjUserAllduration,jdbcType=INTEGER}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.feng.oldfriend.entity.LyjUser" >
@@ -75,8 +77,10 @@
       lyj_user_rewards = #{lyjUserRewards,jdbcType=INTEGER},
       lyj_user_birthday = #{lyjUserBirthday,jdbcType=INTEGER},
       lyj_user_password = #{lyjUserPassword,jdbcType=VARCHAR},
-      lyj_user_uuid = #{lyjUserUuid,jdbcType=VARCHAR}
-    where lyj_user_id = #{lyjUserId,jdbcType=DATE}
+      lyj_user_uuid = #{lyjUserUuid,jdbcType=VARCHAR},
+      lyj_user_applystate= #{lyjUserApplystate,jdbcType=VARCHAR},
+      lyj_user_allduration=#{allDuration,jdbcType=INTEGER}
+    where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </update>
 
   <update id="updateByPrimaryKeyForVolunteer" parameterType="com.feng.oldfriend.entity.LyjUser" >
@@ -88,15 +92,38 @@
     lyj_user_age = #{lyjUserAge,jdbcType=INTEGER},
     lyj_user_country = #{lyjUserCountry,jdbcType=VARCHAR},
     lyj_user_creditid = #{lyjUserCreditid,jdbcType=VARCHAR},
+    lyj_user_phone= #{lyjUserPhone,jdbcType=VARCHAR},
     lyj_user_livingplace = #{lyjUserLivingplace,jdbcType=VARCHAR},
     lyj_user_workplace = #{lyjUserWorkplace,jdbcType=VARCHAR},
     lyj_user_creditpositive = #{lyjUserCreditpositive,jdbcType=VARCHAR},
     lyj_user_creditnegative = #{lyjUserCreditnegative,jdbcType=VARCHAR},
     lyj_user_rewards = #{lyjUserRewards,jdbcType=INTEGER},
-    lyj_user_birthday = #{lyjUserBirthday,jdbcType=INTEGER}
-    where lyj_user_id = #{lyjUserId,jdbcType=DATE}
+    lyj_user_birthday = #{lyjUserBirthday,jdbcType=INTEGER},
+    lyj_user_applystate= #{lyjUserApplystate,jdbcType=VARCHAR},
+    lyj_user_allduration=#{lyjUserAllduration,jdbcType=INTEGER}
+    where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </update>
 
+  <!--修改用户状态-->
+  <update id="updateStatus">
+    update lyj_user
+    set lyj_user_applystate= #{lyjUserApplystate,jdbcType=VARCHAR}
+    where lyj_user_uuid = #{lyjUserUuid,jdbcType=VARCHAR}
+  </update>
+
+  <!--修改用户密码-->
+  <update id="updateUserPassword">
+    update lyj_user
+    set lyj_user_password= #{lyjUserPassword,jdbcType=VARCHAR}
+    where lyj_user_uuid = #{lyjUserUuid,jdbcType=VARCHAR}
+  </update>
+
+  <!--根据UUID和密码找到用户-->
+  <select id="findUserByUuidAndPassword" resultMap="BaseResultMap" >
+    select * from lyj_user
+    where lyj_user_uuid = #{lyjUserUuid} and lyj_user_password= #{lyjUserPassword}
+
+  </select>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     <!--
@@ -106,7 +133,7 @@
     select a.lyj_user_id, a.lyj_user_openid, a.lyj_user_name, a.lyj_user_gender, a.lyj_user_location,
     a.lyj_user_age, a.lyj_user_country, a.lyj_user_creditid, a.lyj_user_phone, a.lyj_user_livingplace,
     a.lyj_user_workplace, a.lyj_user_creditpositive, a.lyj_user_creditnegative,a.lyj_user_rewards,
-    a.lyj_user_birthday,a.lyj_user_password,a.lyj_user_uuid,b.lyj_volunteer_id
+    a.lyj_user_birthday,a.lyj_user_password,a.lyj_user_uuid,b.lyj_volunteer_id,a.lyj_user_applystate,a.lyj_user_allduration
     from lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
     where a.lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
@@ -140,14 +167,16 @@
     where lyj_user_phone = #{phone,jdbcType=VARCHAR}
   </select>
 
+  <!--根据openid找到用户-->
+  <select id="findUserByOpenId" resultMap="BaseResultMap">
+    select *,
+    b.lyj_volunteer_id
+    from lyj_user a
+    LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
+    where a.lyj_user_openid = #{openid,jdbcType=VARCHAR}
+  </select>
 
   <select id="selectAll" resultMap="BaseResultMap" >
-    <!--
-      select lyj_user_id, lyj_user_openid, lyj_user_name, lyj_user_gender, lyj_user_location,
-    lyj_user_age, lyj_user_country, lyj_user_creditid, lyj_user_phone, lyj_user_livingplace,
-    lyj_user_workplace, lyj_user_creditpositive, lyj_user_creditnegative,lyj_user_rewards
-    from lyj_user
-    -->
     SELECT
     a.lyj_user_id,
     a.lyj_user_openid,
@@ -166,7 +195,9 @@
     a.lyj_user_birthday,
     a.lyj_user_password,
     a.lyj_user_uuid,
-    b.lyj_volunteer_id
+    b.lyj_volunteer_id,
+    a.lyj_user_applystate,
+    a.lyj_user_allduration
     FROM
     lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
@@ -203,7 +234,9 @@
     a.lyj_user_password as lyjUserPassword,
     a.lyj_user_uuid as lyjUserUuid,
     a.lyj_user_birthday as lyjUserBirthday,
-    b.lyj_volunteer_id as lyjVolunteerId
+    b.lyj_volunteer_id as lyjVolunteerId,
+    a.lyj_user_applystate as lyjUserApplystate,
+    a.lyj_user_allduration as lyjUserAllduration
     from lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
     <if test="searchText!=null and searchText!=''">
@@ -240,4 +273,164 @@
       or lyj_user_workplace like #{pattern}
     </if>
   </select>
+
+
+  <!--根据搜索条件以及用户状态对所有的用户进行查找-->
+  <select id="getUsersByStatus" resultType="com.feng.oldfriend.entity.LyjUser" >
+    <!--<bind name="pattern" value="'%' + searchText + '%'"/>-->
+
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+    SELECT
+    a.lyj_user_id as lyjUserId,
+    a.lyj_user_openid as lyjUserOpenid,
+    a.lyj_user_name as lyjUserName,
+    a.lyj_user_gender as lyjUserGender,
+    a.lyj_user_location as lyjUserLocation,
+    a.lyj_user_age as lyjUserAge,
+    a.lyj_user_country as lyjUserCountry,
+    a.lyj_user_creditid as lyjUserCreditid,
+    a.lyj_user_phone as lyjUserPhone,
+    a.lyj_user_livingplace as lyjUserLivingplace,
+    a.lyj_user_workplace as lyjUserWorkplace,
+    a.lyj_user_creditpositive as lyjUserCreditpositive,
+    a.lyj_user_creditnegative as lyjUserCreditnegative,
+    a.lyj_user_rewards as lyjUserRewards,
+    a.lyj_user_password as lyjUserPassword,
+    a.lyj_user_uuid as lyjUserUuid,
+    a.lyj_user_birthday as lyjUserBirthday,
+    b.lyj_volunteer_id as lyjVolunteerId,
+    a.lyj_user_applystate as lyjUserApplystate,
+    a.lyj_user_allduration as lyjUserAllduration
+    from lyj_user a
+    LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
+    where 1=1
+    <if test="searchText!=null and searchText!=''">
+      and (
+        lyj_user_name like #{pattern}
+        or lyj_user_location like #{pattern}
+        or lyj_user_country like #{pattern}
+        or lyj_user_phone like #{pattern}
+        or lyj_user_livingplace like #{pattern}
+        or lyj_user_workplace like #{pattern}
+      )
+    </if>
+    <if test="status!=null and status!=''">
+      and a.lyj_user_applystate=#{status}
+    </if>
+  </select>
+
+  <select id="getUsersCountByStatus" resultType="com.feng.oldfriend.entity.LyjUser" >
+    <!--<bind name="pattern" value="'%' + searchText + '%'"/>-->
+
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+    SELECT
+    count(1)
+    from lyj_user a
+    LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
+    where 1=1
+    <if test="searchText!=null and searchText!=''">
+      and
+      (lyj_user_name like #{pattern}
+      or lyj_user_location like #{pattern}
+      or lyj_user_country like #{pattern}
+      or lyj_user_phone like #{pattern}
+      or lyj_user_livingplace like #{pattern}
+      or lyj_user_workplace like #{pattern})
+    </if>
+    <if test="status!=null and status!=''">
+      and a.lyj_user_applystate=#{status}
+    </if>
+  </select>
+
+
+  <select id="getUsersByCompany" resultMap="BaseResultMap" >
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+    SELECT
+    b.*
+    FROM
+    lyj_companyuser_relation a left join
+    lyj_user b on a.lyj_cu_relation_uuid=b.lyj_user_uuid
+    where 1=1
+    <if test="state!=null and state!=0 ">
+      and b.lyj_user_applystate=#{state}
+    </if>
+    <if test="companyId!=null and companyId!=0">
+      and a.lyj_cu_relation_companyid=#{companyId}
+    </if>
+    <if test="searchText!=null and searchText!=''">
+      and (
+      b.lyj_user_name like #{pattern}
+      or b.lyj_user_location like #{pattern}
+      or b.lyj_user_country like #{pattern}
+      or b.lyj_user_phone like #{pattern}
+      or b.lyj_user_livingplace like #{pattern}
+      or b.lyj_user_workplace like #{pattern}
+      )
+    </if>
+  </select>
+
+  <select id="getUsersByCompanyCount" resultType="java.lang.Integer" >
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+    SELECT
+    count(1)
+    FROM
+    lyj_companyuser_relation a left join
+    lyj_user b on a.lyj_cu_relation_uuid=b.lyj_user_uuid
+    where 1=1
+    <if test="state!=null and state!=0 ">
+      and b.lyj_user_applystate=#{state}
+    </if>
+    <if test="companyId!=null and companyId!=0">
+      and a.lyj_cu_relation_companyid=#{companyId}
+    </if>
+    <if test="searchText!=null and searchText!=''">
+      and (
+      b.lyj_user_name like #{pattern}
+      or b.lyj_user_location like #{pattern}
+      or b.lyj_user_country like #{pattern}
+      or b.lyj_user_phone like #{pattern}
+      or b.lyj_user_livingplace like #{pattern}
+      or b.lyj_user_workplace like #{pattern}
+      )
+    </if>
+  </select>
+
+  <!--批量更新用户的审批状态-->
+  <update id="batchUpdateUserStatus">
+        update lyj_user
+        set lyj_user_applystate=#{state}
+        where lyj_user_uuid in
+        <foreach collection="uuids" item="single" index="index"
+                 open=" (" close=")" separator=",">
+          #{single}
+        </foreach>
+  </update>
 </mapper>

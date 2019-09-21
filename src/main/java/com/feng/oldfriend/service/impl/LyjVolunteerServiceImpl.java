@@ -22,13 +22,13 @@ public class LyjVolunteerServiceImpl implements LyjVolunteerService {
 
 
     @Override
-    public List<LyjVolunteer> getAllVolunteer() {
-        return lyjVolunteerMapper.selectAll();
+    public List<LyjVolunteer> getAllVolunteer(String searchText,Integer state) {
+        return lyjVolunteerMapper.selectAll(searchText,state);
     }
 
     @Override
-    public Integer getAllVolunteerCount() {
-        return lyjVolunteerMapper.selectAllCount();
+    public Integer getAllVolunteerCount(String searchText,Integer state) {
+        return lyjVolunteerMapper.selectAllCount(searchText,state);
     }
 
     @Override

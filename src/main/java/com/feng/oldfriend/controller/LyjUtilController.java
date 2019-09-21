@@ -1,22 +1,14 @@
 package com.feng.oldfriend.controller;
 
 import com.feng.oldfriend.config.CommonResponse;
-import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.service.LyjUtilService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author ：yangchenxiao
@@ -31,6 +23,23 @@ public class LyjUtilController {
     @Autowired
     private LyjUtilService lyjUtilService;
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/3 22:08
+     * description: 微信接口的登录  没有用户就会注册
+     */
+    @ResponseBody
+    @GetMapping("/wxlogin")
+    public CommonResponse user_login(@RequestParam(value = "code", required = false) String code)
+    {
+        try{
+            return new CommonResponse(lyjUtilService.wxLogin(code), 200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse(500);
+        }
+
+    }
 
     @ApiOperation(value = "上传图片返回图片地址")
     @ApiImplicitParams(value = {

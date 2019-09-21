@@ -1,5 +1,6 @@
 package com.feng.oldfriend.dao;
 
+import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementType;
 import com.feng.oldfriend.entity.LyjRequirementVO;
@@ -79,9 +80,34 @@ public interface LyjRequirementMapper {
      */
     int updateByPrimaryKey(LyjRequirementVO record);
 
+    int updateByPrimaryKeyNormal(LyjRequirement record);
+
 
     List<LyjRequirement> getMyRequirement(@Param("uuid") String uuid);
 
     List<LyjRequirement> getMyApplyRequirement(@Param("uuid")String uuid);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求的状态
+     */
+    void batchUpdateRequirementState(BatchUserState datas);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/11 22:07
+     * description: 批量更新需求流程的状态
+     */
+    void batchUpdateRequirementProcess(BatchUserState datas);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/9 21:34
+     * description: 根据机构查询需求
+     */
+    List<LyjRequirement> getRequirementsByCompany(@Param(value = "state")Integer state,@Param(value = "companyId")Integer companyId,@Param(value = "searchText")String searchText);
+
+    Integer getRequirementsByCompanyCount(@Param(value = "state")Integer state,@Param(value = "companyId")Integer companyId,@Param(value = "searchText")String searchText);
 
 }

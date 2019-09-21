@@ -31,7 +31,6 @@
             <version>4.5.2</version>
         </dependency>
 
-
         <!--stringutils-->
         <dependency>
             <groupId>commons-lang</groupId>
@@ -52,7 +51,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.0.6</version> 
+            <version>4.0.6</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>

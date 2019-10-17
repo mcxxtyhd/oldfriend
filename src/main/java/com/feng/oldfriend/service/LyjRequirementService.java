@@ -13,9 +13,16 @@ public interface LyjRequirementService {
      * create time: 2019/7/21 11:05
      * description: 根据搜索条件进行查找
      */
-    List<LyjRequirement> getRequirements(String searchText,Integer typeId);
+    List<LyjRequirement> getRequirements(String searchText,Integer typeId,Integer state);
 
-    Integer getRequirementCount(String searchText,Integer typeId);
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 15:48
+     * description: 根据类别 城市 街道 开始时间 时间排序类型查询需求
+     */
+    List<LyjRequirement> getRequirementByManyParameters(String searchText,Integer typeId,String city,String street,String firstDate,String secondDate,Integer dateType);
+
+    Integer getRequirementCount(String searchText,Integer typeId,Integer state);
 
     /**
      * create by: yangchenxiao
@@ -85,4 +92,21 @@ public interface LyjRequirementService {
     List<LyjRequirement> getRequirementsByCompany(Integer state,Integer companyId,String searchText);
 
     Integer getRequirementsCount(Integer state,Integer companyId,String searchText);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 15:14
+     * description: 根据需求状态查询城市
+     */
+    List<String> getRequirementCityByStatus(Integer state);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 15:14
+     * description: 根据需求状态查询城市
+     */
+    List<String> getRequirementStreetByStatus(Integer state);
+
+
+
 }

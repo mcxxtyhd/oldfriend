@@ -1,5 +1,7 @@
 package com.feng.oldfriend.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.config.CommonResponse;
 import com.feng.oldfriend.entity.LyjApplyChange;
@@ -14,6 +16,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author ：yangchenxiao
  * @date ：Created in 2019/7/21 10:23
@@ -26,6 +30,7 @@ public class LyjRequirementApplyController {
 
     @Autowired
     private LyjRequirementApplyService lyjRequirementApplyService;
+
 
     @ApiOperation(value = "根据需求ID查询所有的申请")
     @ApiImplicitParams(value = {
@@ -54,21 +59,20 @@ public class LyjRequirementApplyController {
     }
 
 
-    @ApiOperation(value = "根据参数(搜索内容,创建人ID)进行查找")
+    @ApiOperation(value = "根据参数(搜索内容,UUID)进行查找")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
             @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),
             @ApiImplicitParam(paramType = "query", name = "uuid", dataType = "String", value = "用户唯一标识ID", required = false),
-            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求状态", required = false),
-            @ApiImplicitParam(paramType = "query", name = "typeid", dataType = "Integer", value = "需求类型ID", required = false)
+            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求状态", required = false)
     })
     @GetMapping("/Params")
     public CommonResponse getRequirementByParams(@RequestParam(value = "pageNo", required = false) Integer pageNo,
                                                  @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                                  @RequestParam(value = "searchText", required = false) String searchText,
                                                  @RequestParam(value = "uuid", required = false) String uuid,
-                                                 @RequestParam(value = "status", required = false) Integer status){
+                                                 @RequestParam(value = "status", required = false) Integer[] status){
         try{
             pageNo = pageNo == null ? 1 : pageNo;
             pageSize = pageSize == null ? 10 : pageSize;
@@ -76,7 +80,7 @@ public class LyjRequirementApplyController {
             PageHelper.startPage(pageNo, pageSize);
 
             PageInfo pageInfo = new PageInfo(lyjRequirementApplyService.getRequirementByParams(searchText,uuid,status));
-            return new CommonResponse(pageInfo, 200);
+            return new CommonResponse(pageInfo, 200,lyjRequirementApplyService.getRequirementByParamsCount(searchText,uuid,status));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看",500);
@@ -84,7 +88,8 @@ public class LyjRequirementApplyController {
 
     }
 
-    @ApiOperation(value = "根据参数(搜索内容,创建人ID，需求的状态)进行查找")
+//    这个接口还有点问题  0925  2239  pagehelper  无法翻页
+    @ApiOperation(value = "根据参数(搜索内容,uuid，需求的状态)进行查找 ")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
@@ -98,7 +103,7 @@ public class LyjRequirementApplyController {
                                                  @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                                  @RequestParam(value = "searchText", required = false) String searchText,
                                                  @RequestParam(value = "uuid", required = false) String uuid,
-                                                 @RequestParam(value = "status", required = false) Integer status,
+                                                 @RequestParam(value = "status", required = false) Integer[] status,
                                                  @RequestParam(value = "typeid", required = false) Integer typeid){
         try{
             pageNo = pageNo == null ? 1 : pageNo;
@@ -212,8 +217,7 @@ public class LyjRequirementApplyController {
     @PutMapping("/Batch")
     public CommonResponse batchUpdateApplyState(@RequestBody BatchUserState datas) {
         try {
-            lyjRequirementApplyService.batchUpdateApplyState(datas);
-            return new CommonResponse(200);
+            return new CommonResponse(lyjRequirementApplyService.batchUpdateApplyState(datas),200);
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看", 500);
@@ -321,6 +325,23 @@ public class LyjRequirementApplyController {
         try{
             lyjRequirementApplyService.updateApplyFailed(requirementId,requirementApplyId);
             return new CommonResponse(200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+
+    }
+
+    @ApiOperation(value = "判断该用户是否能够申请当前的需求")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需求ID"),
+            @ApiImplicitParam(paramType = "query", name = "uuid", dataType = "String", value = "用户的uuid")
+    })
+    @GetMapping("/CurrentApply")
+    public CommonResponse checkIfBeApplied(@RequestParam(value = "requirementId", required = false) Integer requirementId,
+                                            @RequestParam(value = "uuid", required = false) String uuid) {
+        try{
+            return new CommonResponse(lyjRequirementApplyService.checkIfBeApplied(requirementId,uuid),200);
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看",500);

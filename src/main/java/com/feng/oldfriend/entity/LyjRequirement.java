@@ -6,6 +6,72 @@ import java.util.List;
 
 public class LyjRequirement implements Serializable {
 
+    private Integer lyjCrRelationCompanyid;
+    private Integer lyjCrRelationRequirementid;
+
+    private Date lyjAdvertisementApprovedate;
+    private Date lyjAdvertisementRefusedate;
+    private Date lyjAdvertisementEnddate;
+    private Date lyjAdvertisementFaildate;
+
+    public Integer getLyjCrRelationCompanyid() {
+        return lyjCrRelationCompanyid;
+    }
+
+    public void setLyjCrRelationCompanyid(Integer lyjCrRelationCompanyid) {
+        this.lyjCrRelationCompanyid = lyjCrRelationCompanyid;
+    }
+
+    public Integer getLyjCrRelationRequirementid() {
+        return lyjCrRelationRequirementid;
+    }
+
+    public void setLyjCrRelationRequirementid(Integer lyjCrRelationRequirementid) {
+        this.lyjCrRelationRequirementid = lyjCrRelationRequirementid;
+    }
+
+    public Date getLyjAdvertisementApprovedate() {
+        return lyjAdvertisementApprovedate;
+    }
+
+    public void setLyjAdvertisementApprovedate(Date lyjAdvertisementApprovedate) {
+        this.lyjAdvertisementApprovedate = lyjAdvertisementApprovedate;
+    }
+
+    public Date getLyjAdvertisementRefusedate() {
+        return lyjAdvertisementRefusedate;
+    }
+
+    public void setLyjAdvertisementRefusedate(Date lyjAdvertisementRefusedate) {
+        this.lyjAdvertisementRefusedate = lyjAdvertisementRefusedate;
+    }
+
+    public Date getLyjAdvertisementEnddate() {
+        return lyjAdvertisementEnddate;
+    }
+
+    public void setLyjAdvertisementEnddate(Date lyjAdvertisementEnddate) {
+        this.lyjAdvertisementEnddate = lyjAdvertisementEnddate;
+    }
+
+    public Date getLyjAdvertisementFaildate() {
+        return lyjAdvertisementFaildate;
+    }
+
+    public void setLyjAdvertisementFaildate(Date lyjAdvertisementFaildate) {
+        this.lyjAdvertisementFaildate = lyjAdvertisementFaildate;
+    }
+
+    private String lyjRequirementConnection;
+
+    public String getLyjRequirementConnection() {
+        return lyjRequirementConnection;
+    }
+
+    public void setLyjRequirementConnection(String lyjRequirementConnection) {
+        this.lyjRequirementConnection = lyjRequirementConnection;
+    }
+
     private String lyjCompanyName;
 
     public String getLyjCompanyName() {

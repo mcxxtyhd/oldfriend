@@ -61,4 +61,11 @@ public interface LyjRequirementTypeMapper {
      * description: 根据父ID找到所有的子需求类型
      */
     List<LyjRequirementType> getSonRequirementTypes(@Param("parentID") Integer parentID);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 14:35
+     * description: 根据需求状态查询所有的需求类型
+     */
+    List<LyjRequirementType> getRequirementTypeByStatus(@Param(value = "state") Integer state);
 }

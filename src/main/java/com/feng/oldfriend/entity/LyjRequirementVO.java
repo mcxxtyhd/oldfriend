@@ -6,6 +6,53 @@ import java.util.List;
 
 public class LyjRequirementVO implements Serializable {
 
+    private Date lyjAdvertisementApprovedate;
+    private Date lyjAdvertisementRefusedate;
+    private Date lyjAdvertisementEnddate;
+    private Date lyjAdvertisementFaildate;
+
+    public Date getLyjAdvertisementApprovedate() {
+        return lyjAdvertisementApprovedate;
+    }
+
+    public void setLyjAdvertisementApprovedate(Date lyjAdvertisementApprovedate) {
+        this.lyjAdvertisementApprovedate = lyjAdvertisementApprovedate;
+    }
+
+    public Date getLyjAdvertisementRefusedate() {
+        return lyjAdvertisementRefusedate;
+    }
+
+    public void setLyjAdvertisementRefusedate(Date lyjAdvertisementRefusedate) {
+        this.lyjAdvertisementRefusedate = lyjAdvertisementRefusedate;
+    }
+
+    public Date getLyjAdvertisementEnddate() {
+        return lyjAdvertisementEnddate;
+    }
+
+    public void setLyjAdvertisementEnddate(Date lyjAdvertisementEnddate) {
+        this.lyjAdvertisementEnddate = lyjAdvertisementEnddate;
+    }
+
+    public Date getLyjAdvertisementFaildate() {
+        return lyjAdvertisementFaildate;
+    }
+
+    public void setLyjAdvertisementFaildate(Date lyjAdvertisementFaildate) {
+        this.lyjAdvertisementFaildate = lyjAdvertisementFaildate;
+    }
+
+    private String lyjRequirementConnection;
+
+    public String getLyjRequirementConnection() {
+        return lyjRequirementConnection;
+    }
+
+    public void setLyjRequirementConnection(String lyjRequirementConnection) {
+        this.lyjRequirementConnection = lyjRequirementConnection;
+    }
+
     private Integer lyjCompanyId;
 
     public Integer getLyjCompanyId() {

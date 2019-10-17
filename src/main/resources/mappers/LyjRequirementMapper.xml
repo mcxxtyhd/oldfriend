@@ -23,11 +23,21 @@
         <result column="lyj_requirement_reward" jdbcType="INTEGER" property="lyjRequirementReward"/>
         <result column="lyj_requirement_volunteerperfer" jdbcType="INTEGER" property="lyjRequirementVolunteerperfer"/>
         <result column="lyj_requirement_detailadd" jdbcType="VARCHAR" property="lyjRequirementDetailadd"/>
+
         <result column="lyj_requirement_state" jdbcType="INTEGER" property="lyjRequirementState"/>
         <result column="lyj_requirement_num" jdbcType="INTEGER" property="lyjRequirementNum"/>
         <result column="lyj_requirement_process" jdbcType="INTEGER" property="lyjRequirementProcess"/>
         <result column="lyj_requirement_applyednum" jdbcType="INTEGER" property="lyjRequirementApplyednum"/>
         <result column="lyj_company_name" jdbcType="VARCHAR" property="lyjCompanyName"/>
+        <result column="lyj_requirement_connection" jdbcType="VARCHAR" property="lyjRequirementConnection"/>
+
+        <result column="lyj_requirement_approve_date" property="lyjAdvertisementApprovedate" jdbcType="TIMESTAMP"/>
+        <result column="lyj_requirement_refuse_date" property="lyjAdvertisementRefusedate" jdbcType="TIMESTAMP"/>
+        <result column="lyj_requirement_end_date" property="lyjAdvertisementEnddate" jdbcType="TIMESTAMP"/>
+        <result column="lyj_requirement_fail_date" property="lyjAdvertisementFaildate" jdbcType="TIMESTAMP"/>
+
+        <result column="lyj_cr_relation_companyid" property="lyjCrRelationCompanyid" jdbcType="INTEGER"/>
+        <result column="lyj_cr_relation_requirementid" property="lyjCrRelationRequirementid" jdbcType="INTEGER"/>
 
 
     </resultMap>
@@ -50,10 +60,19 @@
       lyj_requirement.lyj_requirement_reward
       lyj_requirement.lyj_requirement_volunteerperfer,
       lyj_requirement.lyj_requirement_detailadd,
-      lyj_requirement.lyjRequirementState,
-      lyj_requirement.lyjRequirementNum,
-      lyj_requirement.lyjRequirementProcess,
-      lyj_requirement.lyjRequirementApplyednum
+
+
+      lyj_requirement.lyj_requirement_state,
+      lyj_requirement.lyj_requirement_num,
+      lyj_requirement.lyj_requirement_process,
+      lyj_requirement.lyj_requirement_applyednum,
+      lyj_requirement.lyj_requirement_connection,
+
+      lyj_requirement.lyj_requirement_approve_date,
+      lyj_requirement.lyj_requirement_refuse_date,
+      lyj_requirement.lyj_requirement_end_date,
+      lyj_requirement.lyj_requirement_fail_date
+
 
   </sql>
 
@@ -85,18 +104,22 @@
         b.*
         FROM
         lyj_requirement b
-        <where>
-            <if test="searchText!=null and searchText!='' ">
-                (
-                b.lyj_requirement_name like #{pattern}
-                or b.lyj_requirement_description like #{pattern}
-                or b.lyj_requirement_city like #{pattern}
-                or b.lyj_requirement_area like #{pattern}
-                or b.lyj_requirement_street like #{pattern}
-                or b.lyj_requirement_rawaddress like #{pattern}
-                )
-            </if>
-        </where>
+        where 1=1
+        <if test="state!=null and state!=0">
+            and lyj_requirement_state=#{state}
+        </if>
+
+        <if test="searchText!=null and searchText!='' ">
+            and (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            or b.lyj_requirement_connection like #{pattern}
+            )
+        </if>
     </select>
 
     <select id="getLyjRequirementsCount" resultType="java.lang.Integer">
@@ -105,18 +128,22 @@
         count(1)
         FROM
         lyj_requirement b
-        <where>
-            <if test="searchText!=null and searchText!='' ">
-                (
-                b.lyj_requirement_name like #{pattern}
-                or b.lyj_requirement_description like #{pattern}
-                or b.lyj_requirement_city like #{pattern}
-                or b.lyj_requirement_area like #{pattern}
-                or b.lyj_requirement_street like #{pattern}
-                or b.lyj_requirement_rawaddress like #{pattern}
-                )
-            </if>
-        </where>
+        where 1=1
+        <if test="state!=null and state!=0">
+            and lyj_requirement_state=#{state}
+        </if>
+
+        <if test="searchText!=null and searchText!='' ">
+            and (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            or b.lyj_requirement_connection like #{pattern}
+            )
+        </if>
     </select>
 
     <!--根据搜索内容和需求类型ID进行查找数据-->
@@ -129,14 +156,19 @@
         lyj_requirement b
         on a.lyj_requirement_id=b.lyj_requirement_id
         where a.lyj_requirement_typeid=#{typeId}
+        <if test="state!=null and state!=0">
+            and lyj_requirement_state=#{state}
+        </if>
+
         <if test="searchText!=null and searchText!='' ">
-            (
-            a.lyj_requirement_name like #{pattern}
-            or a.lyj_requirement_description like #{pattern}
-            or a.lyj_requirement_city like #{pattern}
-            or a.lyj_requirement_area like #{pattern}
-            or a.lyj_requirement_street like #{pattern}
-            or a.lyj_requirement_rawaddress like #{pattern}
+            and (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            or b.lyj_requirement_connection like #{pattern}
             )
         </if>
     </select>
@@ -150,17 +182,100 @@
         lyj_requirement b
         on a.lyj_requirement_id=b.lyj_requirement_id
         where a.lyj_requirement_typeid=#{typeId}
+        <if test="state!=null and state!=0">
+            and lyj_requirement_state=#{state}
+        </if>
+
         <if test="searchText!=null and searchText!='' ">
-            (
-            a.lyj_requirement_name like #{pattern}
-            or a.lyj_requirement_description like #{pattern}
-            or a.lyj_requirement_city like #{pattern}
-            or a.lyj_requirement_area like #{pattern}
-            or a.lyj_requirement_street like #{pattern}
-            or a.lyj_requirement_rawaddress like #{pattern}
+            and (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            or b.lyj_requirement_connection like #{pattern}
             )
         </if>
     </select>
+
+    <!--根据搜索内容和需求类型ID进行查找数据-->
+    <select id="getLyjRequirementsNoType" resultMap="RequirementAndType">
+        <bind name="pattern" value="'%' + searchText + '%'"/>
+        SELECT
+        b.*
+        FROM
+        lyj_requirement b
+        where 1=1
+        <if test="city!=null and city!='' ">
+            and b.lyj_requirement_city=#{city}
+        </if>
+        <if test="street!=null and street!='' ">
+            and b.lyj_requirement_street=#{street}
+        </if>
+        <if test="firstDate!=null and firstDate!='' ">
+            and str_to_date(#{firstDate},'%Y-%m-%d %H:%i:%s') &lt; b.lyj_requirement_begindatetime and
+            str_to_date(#{secondDate},'%Y-%m-%d %H:%i:%s') &gt; b.lyj_requirement_begindatetime
+        </if>
+        <if test="searchText!=null and searchText!='' ">
+            and (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            or b.lyj_requirement_connection like #{pattern}
+            )
+        </if>
+        <if test="dateType==1">
+            order by b.lyj_requirement_begindatetime
+        </if>
+        <if test="dateType==2">
+            order by b.lyj_requirement_begindatetime desc
+        </if>
+    </select>
+
+    <!--根据搜索内容和需求类型ID进行查找数据-->
+    <select id="getRequirementByManyParameters" resultMap="RequirementAndType">
+        <bind name="pattern" value="'%' + searchText + '%'"/>
+        SELECT
+        b.*
+        FROM
+        lyj_requirement b left join
+        lyj_requirementtype_relation a
+        on a.lyj_requirement_id=b.lyj_requirement_id
+        where a.lyj_requirement_typeid=#{typeId}
+        <if test="city!=null and city!='' ">
+            and b.lyj_requirement_city=#{city}
+        </if>
+        <if test="street!=null and street!='' ">
+            and b.lyj_requirement_street=#{street}
+        </if>
+        <if test="firstDate!=null and firstDate!='' ">
+            and str_to_date(#{firstDate},'%Y-%m-%d %H:%i:%s') &lt; b.lyj_requirement_begindatetime and
+            str_to_date(#{secondDate},'%Y-%m-%d %H:%i:%s') &gt; b.lyj_requirement_begindatetime
+        </if>
+        <if test="searchText!=null and searchText!='' ">
+            and (
+            b.lyj_requirement_name like #{pattern}
+            or b.lyj_requirement_description like #{pattern}
+            or b.lyj_requirement_city like #{pattern}
+            or b.lyj_requirement_area like #{pattern}
+            or b.lyj_requirement_street like #{pattern}
+            or b.lyj_requirement_rawaddress like #{pattern}
+            or b.lyj_requirement_connection like #{pattern}
+            )
+        </if>
+        <if test="dateType==1">
+            order by b.lyj_requirement_begindatetime
+        </if>
+        <if test="dateType==2">
+            order by b.lyj_requirement_begindatetime desc
+        </if>
+    </select>
+
+
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         <!--
@@ -184,7 +299,12 @@
         lyj_requirement_begindatetime, lyj_requirement_enddatetime,
         lyj_requirement_rawaddress, lyj_requirement_maplocation,
         lyj_requirement_reward,lyj_requirement_volunteerperfer,
-        lyj_requirement_detailadd,lyj_requirement_state,lyj_requirement_num,lyj_requirement_process,lyj_requirement_applyednum)
+        lyj_requirement_detailadd,lyj_requirement_state,lyj_requirement_num,lyj_requirement_process,lyj_requirement_applyednum,lyj_requirement_connection,
+        lyj_requirement_approve_date,
+        lyj_requirement_refuse_date,
+        lyj_requirement_end_date,
+        lyj_requirement_fail_date
+        )
         values (#{lyjRequirementId,jdbcType=INTEGER}, #{lyjRequirementName,jdbcType=VARCHAR},
         #{lyjRequirementDescription,jdbcType=VARCHAR}, #{lyjRequirementCreateuser,jdbcType=VARCHAR},
         #{lyjRequirementApplyuser,jdbcType=VARCHAR}, #{lyjRequirementIsvolunteer,jdbcType=INTEGER},
@@ -194,7 +314,13 @@
         #{lyjRequirementRawaddress,jdbcType=VARCHAR}, #{lyjRequirementMaplocation,jdbcType=VARCHAR},
         #{lyjRequirementReward,jdbcType=INTEGER},#{lyjRequirementVolunteerperfer,jdbcType=INTEGER},
         #{lyjRequirementDetailadd,jdbcType=VARCHAR},#{lyjRequirementState,jdbcType=INTEGER},#{lyjRequirementNum,jdbcType=INTEGER},
-        #{lyjRequirementProcess,jdbcType=INTEGER},#{lyjRequirementApplyednum,jdbcType=INTEGER})
+        #{lyjRequirementProcess,jdbcType=INTEGER},#{lyjRequirementApplyednum,jdbcType=INTEGER},#{lyjRequirementConnection,jdbcType=VARCHAR},
+
+        #{lyjAdvertisementApprovedate,jdbcType=TIMESTAMP},
+        #{lyjAdvertisementRefusedate,jdbcType=TIMESTAMP},
+        #{lyjAdvertisementEnddate,jdbcType=TIMESTAMP},
+        #{lyjAdvertisementFaildate,jdbcType=TIMESTAMP}
+        )
 
     </insert>
 
@@ -208,7 +334,14 @@
         lyj_requirement_begindatetime, lyj_requirement_enddatetime,
         lyj_requirement_rawaddress, lyj_requirement_maplocation,
         lyj_requirement_reward,lyj_requirement_volunteerperfer,
-        lyj_requirement_detailadd,lyj_requirement_state,lyj_requirement_num,lyj_requirement_process,lyj_requirement_applyednum)
+        lyj_requirement_detailadd,lyj_requirement_state,lyj_requirement_num,lyj_requirement_process,lyj_requirement_applyednum,lyj_requirement_connection,
+
+        lyj_requirement_approve_date,
+        lyj_requirement_refuse_date,
+        lyj_requirement_end_date,
+        lyj_requirement_fail_date
+
+        )
 
         values (#{lyjRequirementId,jdbcType=INTEGER}, #{lyjRequirementName,jdbcType=VARCHAR},
         #{lyjRequirementDescription,jdbcType=VARCHAR}, #{lyjRequirementCreateuser,jdbcType=VARCHAR},
@@ -219,7 +352,13 @@
         #{lyjRequirementRawaddress,jdbcType=VARCHAR}, #{lyjRequirementMaplocation,jdbcType=VARCHAR},
         #{lyjRequirementReward,jdbcType=INTEGER},#{lyjRequirementVolunteerperfer,jdbcType=INTEGER},
         #{lyjRequirementDetailadd,jdbcType=VARCHAR},#{lyjRequirementState,jdbcType=INTEGER},#{lyjRequirementNum,jdbcType=INTEGER},
-        #{lyjRequirementProcess,jdbcType=INTEGER},#{lyjRequirementApplyednum,jdbcType=INTEGER})
+        #{lyjRequirementProcess,jdbcType=INTEGER},#{lyjRequirementApplyednum,jdbcType=INTEGER},#{lyjRequirementConnection,jdbcType=VARCHAR},
+
+        #{lyjAdvertisementApprovedate,jdbcType=TIMESTAMP},
+        #{lyjAdvertisementRefusedate,jdbcType=TIMESTAMP},
+        #{lyjAdvertisementEnddate,jdbcType=TIMESTAMP},
+        #{lyjAdvertisementFaildate,jdbcType=TIMESTAMP})
+
     </insert>
 
     <update id="updateByPrimaryKey">
@@ -247,7 +386,13 @@
         lyj_requirement_state=#{lyjRequirementState,jdbcType=INTEGER},
         lyj_requirement_num=#{lyjRequirementNum,jdbcType=INTEGER},
         lyj_requirement_process=#{lyjRequirementProcess,jdbcType=INTEGER},
-        lyj_requirement_applyednum=#{lyjRequirementApplyednum,jdbcType=INTEGER}
+        lyj_requirement_applyednum=#{lyjRequirementApplyednum,jdbcType=INTEGER},
+        lyj_requirement_connection=#{lyjRequirementConnection,jdbcType=VARCHAR},
+
+        lyj_requirement_approve_date = #{lyjAdvertisementApprovedate,jdbcType=TIMESTAMP},
+        lyj_requirement_refuse_date = #{lyjAdvertisementRefusedate,jdbcType=TIMESTAMP},
+        lyj_requirement_end_date = #{lyjAdvertisementEnddate,jdbcType=TIMESTAMP},
+        lyj_requirement_fail_date = #{lyjAdvertisementFaildate,jdbcType=TIMESTAMP}
 
         where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
     </update>
@@ -273,7 +418,13 @@
         lyj_requirement_state=#{lyjRequirementState,jdbcType=INTEGER},
         lyj_requirement_num=#{lyjRequirementNum,jdbcType=INTEGER},
         lyj_requirement_process=#{lyjRequirementProcess,jdbcType=INTEGER},
-        lyj_requirement_applyednum=#{lyjRequirementApplyednum,jdbcType=INTEGER}
+        lyj_requirement_applyednum=#{lyjRequirementApplyednum,jdbcType=INTEGER},
+        lyj_requirement_connection=#{lyjRequirementConnection,jdbcType=VARCHAR},
+
+        lyj_requirement_approve_date = #{lyjAdvertisementApprovedate,jdbcType=TIMESTAMP},
+        lyj_requirement_refuse_date = #{lyjAdvertisementRefusedate,jdbcType=TIMESTAMP},
+        lyj_requirement_end_date = #{lyjAdvertisementEnddate,jdbcType=TIMESTAMP},
+        lyj_requirement_fail_date = #{lyjAdvertisementFaildate,jdbcType=TIMESTAMP}
 
         where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
     </update>
@@ -288,7 +439,12 @@
         lyj_requirement_street, lyj_requirement_createdatetime, lyj_requirement_begindatetime,
         lyj_requirement_enddatetime, lyj_requirement_rawaddress, lyj_requirement_maplocation,
         lyj_requirement_reward,lyj_requirement_volunteerperfer,lyj_requirement_detailadd,lyj_requirement_state,lyj_requirement_num,lyj_requirement_process,
-        lyj_requirement_applyednum
+        lyj_requirement_applyednum,lyj_requirement_connection,
+        lyj_requirement_approve_date,
+        lyj_requirement_refuse_date,
+        lyj_requirement_end_date,
+        lyj_requirement_fail_date
+
         from lyj_requirement
         where lyj_requirement_id = #{lyjRequirementId,jdbcType=INTEGER}
 
@@ -303,7 +459,11 @@
         lyj_requirement_street, lyj_requirement_createdatetime, lyj_requirement_begindatetime,
         lyj_requirement_enddatetime, lyj_requirement_rawaddress, lyj_requirement_maplocation,
         lyj_requirement_reward,lyj_requirement_volunteerperfer,lyj_requirement_detailadd,lyj_requirement_state,lyjRequirementNum,lyj_requirement_process,
-        lyj_requirement_applyednum
+        lyj_requirement_applyednum,lyj_requirement_connection,
+        lyj_requirement_approve_date,
+        lyj_requirement_refuse_date,
+        lyj_requirement_end_date,
+        lyj_requirement_fail_date
         from lyj_requirement
     </select>
 
@@ -331,7 +491,8 @@
         </choose>
         SELECT
         a.*,
-        c.lyj_company_name
+        c.lyj_company_name,
+        b.*
         FROM
         lyj_companyrequirement_relation b
         left join lyj_requirement a on a.lyj_requirement_id=b.lyj_cr_relation_requirementid
@@ -352,6 +513,7 @@
             or a.lyj_requirement_area like #{pattern}
             or a.lyj_requirement_street like #{pattern}
             or a.lyj_requirement_rawaddress like #{pattern}
+            or a.lyj_requirement_connection like #{pattern}
             )
         </if>
     </select>
@@ -387,6 +549,7 @@
             or a.lyj_requirement_area like #{pattern}
             or a.lyj_requirement_street like #{pattern}
             or a.lyj_requirement_rawaddress like #{pattern}
+            or a.lyj_requirement_connection like #{pattern}
             )
         </if>
     </select>
@@ -395,8 +558,9 @@
     <update id="batchUpdateRequirementState">
         update lyj_requirement
         set lyj_requirement_state=#{state}
-        <if test="state==3">
+        <if test="state==2">
             ,lyj_requirement_process=2
+            ,lyj_requirement_approve_date=current_timestamp
         </if>
         where lyj_requirement_id in
         <foreach collection="ids" item="single" index="index"
@@ -415,4 +579,38 @@
             #{single}
         </foreach>
     </update>
+
+    <select id="getRequirementCityByStatus" resultType="java.lang.String">
+        SELECT
+        lyj_requirement_city
+        FROM
+        lyj_requirement
+        where lyj_requirement_city is not NULL and lyj_requirement_city!=''
+        <if test="state!=null and state!=0">
+            and lyj_requirement_state=#{state}
+        </if>
+        GROUP BY lyj_requirement_city
+    </select>
+
+    <select id="getRequirementStreetByStatus" resultType="java.lang.String">
+        SELECT
+        lyj_requirement_street
+        FROM
+        lyj_requirement
+        where lyj_requirement_street is not NULL and lyj_requirement_street!=''
+        <if test="state!=null and state!=0">
+            and lyj_requirement_state=#{state}
+        </if>
+        GROUP BY lyj_requirement_street
+    </select>
+
+    <select id="selectByDate" resultType="java.lang.Integer">
+        select count(1) from
+        lyj_requirement_apply t1 left join lyj_requirement t2
+        on t1.lyj_requirement_applyrequirementid=t2.lyj_requirement_id
+        where ((#{beginDate} &lt; t2.lyj_requirement_begindatetime and #{endDate} &gt;= t2.lyj_requirement_begindatetime)
+        or (#{beginDate} &lt; t2.lyj_requirement_enddatetime and #{endDate} &gt;= t2.lyj_requirement_enddatetime)
+        or (#{beginDate} &gt;= t2.lyj_requirement_begindatetime and #{endDate} &lt; t2.lyj_requirement_enddatetime))
+        and t1.lyj_requirement_applystate in (1,3,4) and t1.lyj_user_id=#{uuid}
+    </select>
 </mapper>

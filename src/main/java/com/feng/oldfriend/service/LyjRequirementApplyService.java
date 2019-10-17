@@ -4,6 +4,7 @@ import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.entity.LyjRequirement;
 import com.feng.oldfriend.entity.LyjRequirementApply;
 import com.feng.oldfriend.entity.LyjRequirementApplyField;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -24,14 +25,16 @@ public interface LyjRequirementApplyService {
      * create time: 2019/7/21 11:05
      * description: 根据参数(搜索内容,唯一标识ID)进行查找
      */
-    List<LyjRequirementApplyField> getRequirementByParams(String searchText, String uuid, Integer status);
+    List<LyjRequirementApplyField> getRequirementByParams(String searchText, String uuid, Integer[] status);
+
+    Integer getRequirementByParamsCount(String searchText, String uuid, Integer[] status);
 
     /**
      * create by: yangchenxiao
      * create time: 2019/7/21 11:05
      * description: 根据参数(搜索内容,唯一标识ID，需求的状态)进行查找
      */
-    List<LyjRequirementApplyField> getRequirementByParamsType(String searchText, String uuid, Integer status,Integer typeid);
+    List<LyjRequirementApplyField> getRequirementByParamsType(String searchText, String uuid, Integer[] status,Integer typeid);
 
     /**
      * create by: yangchenxiao
@@ -55,7 +58,7 @@ public interface LyjRequirementApplyService {
      * create time: 2019/9/11 22:07
      * description: 批量更新需求申请的状态
      */
-    void batchUpdateApplyState(BatchUserState datas) throws Exception;
+    Boolean batchUpdateApplyState(BatchUserState datas) throws Exception;
 
     void delRequirementApply(Integer id);
 
@@ -81,5 +84,17 @@ public interface LyjRequirementApplyService {
      */
     void updateApplyFailed(Integer requirementId,Integer requirementApplyId);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/28 16:37
+     * description: 定时任务
+     */
+    void updateApplyFinish();
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/10/8 21:52
+     * description: 检查当前用户是否能够申请该需求
+     */
+    Boolean checkIfBeApplied(Integer requirementId,String uuid);
 }

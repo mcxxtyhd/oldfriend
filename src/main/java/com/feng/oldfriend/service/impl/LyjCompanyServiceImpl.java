@@ -1,8 +1,6 @@
 package com.feng.oldfriend.service.impl;
 
-import com.feng.oldfriend.dao.LyjCompanyMapper;
-import com.feng.oldfriend.dao.LyjCompanyrequirementRelationMapper;
-import com.feng.oldfriend.dao.LyjCompanyuserRelationMapper;
+import com.feng.oldfriend.dao.*;
 import com.feng.oldfriend.entity.LyjCompany;
 import com.feng.oldfriend.entity.LyjCompanyrequirementRelation;
 import com.feng.oldfriend.entity.LyjCompanyuserRelation;
@@ -28,6 +26,12 @@ public class LyjCompanyServiceImpl implements LyjCompanyService {
 
     @Autowired
     private LyjCompanyuserRelationMapper lyjCompanyuserRelationMapper;
+
+    @Autowired
+    private LyjUserMapper lyjUserMapper;
+
+    @Autowired
+    private LyjRequirementMapper lyjRequirementMapper;
 
     @Override
     public List<LyjCompany> getCompanies(String searchText) {
@@ -71,8 +75,12 @@ public class LyjCompanyServiceImpl implements LyjCompanyService {
 
     @Override
     public void removeRelationCR(LyjCompanyrequirementRelation lyjCompanyrequirementRelation) {
+        //1、先删除关系数据
         LyjCompanyrequirementRelation data=new LyjCompanyrequirementRelation();
         lyjCompanyrequirementRelationMapper.deleteByPrimaryKey(lyjCompanyrequirementRelation.getLyjCrRelationCompanyid(),lyjCompanyrequirementRelation.getLyjCrRelationRequirementid());
+
+        //2、再删除需求
+        lyjRequirementMapper.deleteByPrimaryKey(lyjCompanyrequirementRelation.getLyjCrRelationRequirementid());
     }
 
     @Override
@@ -82,6 +90,10 @@ public class LyjCompanyServiceImpl implements LyjCompanyService {
 
     @Override
     public void removeRelationCU(LyjCompanyuserRelation lyjCompanyuserRelation) {
+        //1、先删除关系数据
         lyjCompanyuserRelationMapper.deleteByPrimaryKey(lyjCompanyuserRelation.getLyjCuRelationCompanyid(),lyjCompanyuserRelation.getLyjCuRelationUuid());
+
+        //2、再删除用户数据
+        lyjUserMapper.deleteByUUID(lyjCompanyuserRelation.getLyjCuRelationUuid());
     }
 }

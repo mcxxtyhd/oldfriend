@@ -40,13 +40,29 @@ public class LyjAdvertisementController {
      */
     @ApiOperation(value = "根据广告页找到指定的图片url")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "pageName", dataType = "String", value = "哪个页面的广告", required = false)
+            @ApiImplicitParam(paramType = "query", name = "pageName", dataType = "String", value = "哪个页面的广告", required = false),
+            @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0", required = false),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10", required = false)
     })
     @GetMapping()
-    public CommonResponse getAdvertisementByPageName(@RequestParam(value = "pageName", required = false) String pageName) {
-        List<LyjAdvertisement> tyjAdvertisement=lyjAdvertisementService.getAdvertisementsByPagename(pageName);
-        return new CommonResponse(tyjAdvertisement,200,lyjAdvertisementService.getAdvertisementByPageNameCount(pageName));
+    public CommonResponse getAdvertisementByPageName(@RequestParam(value = "pageName", required = false) String pageName,
+                                                     @RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                                     @RequestParam(value = "pageSize", required = false) Integer pageSize) {
 
+        try{
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? 10 : pageSize;
+
+            PageHelper.startPage(pageNo, pageSize);
+
+            PageInfo pageInfo = new PageInfo(lyjAdvertisementService.getAdvertisementsByPagename(pageName));
+
+            return new CommonResponse(pageInfo,200,lyjAdvertisementService.getAdvertisementByPageNameCount(pageName));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
     }
 
     /**

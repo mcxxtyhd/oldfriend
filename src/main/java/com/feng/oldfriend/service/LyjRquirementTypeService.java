@@ -39,4 +39,11 @@ public interface LyjRquirementTypeService {
      * description: 根据父ID查询所有的子需求类型
      */
     List<LyjRequirementType> getSonRequirementTypes(Integer parentID);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 14:35
+     * description: 根据需求状态查询所有的需求类型
+     */
+    List<LyjRequirementType> getRequirementTypeByStatus(Integer state);
 }

@@ -76,4 +76,14 @@ public class LyjRquirementTypeServiceImpl implements LyjRquirementTypeService {
     public List<LyjRequirementType> getSonRequirementTypes(Integer parentID) {
         return lyjRequirementTypeMapper.getSonRequirementTypes(parentID);
     }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 14:35
+     * description: 根据需求状态查询所有的需求类型
+     */
+    @Override
+    public List<LyjRequirementType> getRequirementTypeByStatus(Integer state) {
+        return lyjRequirementTypeMapper.getRequirementTypeByStatus(state);
+    }
 }

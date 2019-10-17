@@ -5,6 +5,7 @@ import com.feng.oldfriend.Utils.Md5Util;
 import com.feng.oldfriend.VO.BatchUserState;
 import com.feng.oldfriend.dao.*;
 import com.feng.oldfriend.entity.LyjCompany;
+import com.feng.oldfriend.entity.LyjCompanyuserRelation;
 import com.feng.oldfriend.entity.LyjRequirementApply;
 import com.feng.oldfriend.entity.LyjUser;
 import com.feng.oldfriend.service.LyjCompanyService;
@@ -36,6 +37,9 @@ public class LyjUserServiceImpl implements LyjUserService {
 
     @Autowired
     private LyjCompanyService lyjCompanyService;
+
+    @Autowired
+    private LyjCompanyuserRelationMapper lyjCompanyuserRelationMapper;
 
     /**
      * create by: yangchenxiao
@@ -144,6 +148,14 @@ public class LyjUserServiceImpl implements LyjUserService {
         user.setLyjUserUuid(encryptUserInfo);
 
         lyjUserMapper.insert(user);
+
+        //在增加用户机构关系
+        if(user.getCompanyIds().size()>0){
+            LyjCompanyuserRelation data=new LyjCompanyuserRelation();
+            data.setLyjCuRelationCompanyid(user.getCompanyIds().get(0));
+            data.setLyjCuRelationUuid(user.getLyjUserUuid());
+            lyjCompanyuserRelationMapper.insert(data);
+        }
 
         return encryptUserInfo;
     }

@@ -54,6 +54,8 @@
   </select>
 
 
+
+
   <select id="selectAll" resultMap="BaseResultMap" >
     <choose>
       <when test="searchText">
@@ -70,7 +72,7 @@
     b.lyj_user_applystate
     from lyj_volunteer a
     left join lyj_user b on b.lyj_user_uuid=a.lyj_user_id
-    where 1=1
+    where a.lyj_user_id not in (SELECT lyj_blacklist_uuid FROM `lyj_blacklist` where lyj_blacklist_isdel=1)
     <if test="searchText!=null and searchText!=''">
       and b.lyj_user_name like #{pattern}
     </if>
@@ -92,7 +94,7 @@
     select count(1)
     from lyj_volunteer a
     left join lyj_user b on b.lyj_user_uuid=a.lyj_user_id
-    where 1=1
+    where a.lyj_user_id not in (SELECT lyj_blacklist_uuid FROM `lyj_blacklist` where lyj_blacklist_isdel=1)
     <if test="searchText!=null and searchText!=''">
       and b.lyj_user_name like #{pattern}
     </if>

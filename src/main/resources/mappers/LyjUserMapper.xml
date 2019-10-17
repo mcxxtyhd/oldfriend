@@ -38,6 +38,12 @@
     delete from lyj_user
     where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByUUID" parameterType="java.lang.String" >
+    delete from lyj_user
+    where lyj_user_uuid = #{uuid}
+  </delete>
+
   <insert id="insert" parameterType="com.feng.oldfriend.entity.LyjUser" >
     <!--
       WARNING - @mbggenerated
@@ -79,7 +85,7 @@
       lyj_user_password = #{lyjUserPassword,jdbcType=VARCHAR},
       lyj_user_uuid = #{lyjUserUuid,jdbcType=VARCHAR},
       lyj_user_applystate= #{lyjUserApplystate,jdbcType=VARCHAR},
-      lyj_user_allduration=#{allDuration,jdbcType=INTEGER}
+      lyj_user_allduration=#{lyjUserAllduration,jdbcType=INTEGER}
     where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
   </update>
 
@@ -102,6 +108,28 @@
     lyj_user_applystate= #{lyjUserApplystate,jdbcType=VARCHAR},
     lyj_user_allduration=#{lyjUserAllduration,jdbcType=INTEGER}
     where lyj_user_id = #{lyjUserId,jdbcType=INTEGER}
+  </update>
+
+
+  <update id="updateByPrimaryByUUID" parameterType="com.feng.oldfriend.entity.LyjUser" >
+    update lyj_user
+    set
+    lyj_user_name = #{lyjUserName,jdbcType=VARCHAR},
+    lyj_user_gender = #{lyjUserGender,jdbcType=INTEGER},
+    lyj_user_location = #{lyjUserLocation,jdbcType=VARCHAR},
+    lyj_user_age = #{lyjUserAge,jdbcType=INTEGER},
+    lyj_user_country = #{lyjUserCountry,jdbcType=VARCHAR},
+    lyj_user_creditid = #{lyjUserCreditid,jdbcType=VARCHAR},
+    lyj_user_phone= #{lyjUserPhone,jdbcType=VARCHAR},
+    lyj_user_livingplace = #{lyjUserLivingplace,jdbcType=VARCHAR},
+    lyj_user_workplace = #{lyjUserWorkplace,jdbcType=VARCHAR},
+    lyj_user_creditpositive = #{lyjUserCreditpositive,jdbcType=VARCHAR},
+    lyj_user_creditnegative = #{lyjUserCreditnegative,jdbcType=VARCHAR},
+    lyj_user_rewards = #{lyjUserRewards,jdbcType=INTEGER},
+    lyj_user_birthday = #{lyjUserBirthday,jdbcType=INTEGER},
+    lyj_user_applystate= #{lyjUserApplystate,jdbcType=VARCHAR},
+    lyj_user_allduration=#{lyjUserAllduration,jdbcType=INTEGER}
+    where lyj_user_uuid = #{lyjUserUuid,jdbcType=VARCHAR}
   </update>
 
   <!--修改用户状态-->
@@ -201,7 +229,27 @@
     FROM
     lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
+    order by a.lyj_user_allduration desc
+  </select>
 
+  <select id="getAllVolunteerTop" resultMap="BaseResultMap" >
+    <choose>
+      <when test="searchText">
+        <bind name="pattern" value="'%'+ searchText+'%'"/>
+      </when>
+      <otherwise>
+        <bind name="pattern" value="'%%'"/>
+      </otherwise>
+    </choose>
+
+    select b.*
+    from lyj_volunteer a
+    left join lyj_user b on b.lyj_user_uuid=a.lyj_user_id
+    where a.lyj_user_id not in (SELECT lyj_blacklist_uuid FROM lyj_blacklist where lyj_blacklist_isdel=1)
+    <if test="searchText!=null and searchText!=''">
+      and b.lyj_user_name like #{pattern}
+    </if>
+    ORDER BY b.lyj_user_allduration desc
   </select>
 
   <!--根据搜索条件对所有的用户进行查找-->
@@ -240,16 +288,17 @@
     from lyj_user a
     LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
     <if test="searchText!=null and searchText!=''">
-      where lyj_user_name like #{pattern}
-      or lyj_user_location like #{pattern}
-      or lyj_user_country like #{pattern}
-      or lyj_user_phone like #{pattern}
-      or lyj_user_livingplace like #{pattern}
-      or lyj_user_workplace like #{pattern}
+      where a.lyj_user_name like #{pattern}
+      or a.lyj_user_location like #{pattern}
+      or a.lyj_user_country like #{pattern}
+      or a.lyj_user_phone like #{pattern}
+      or a.lyj_user_livingplace like #{pattern}
+      or a.lyj_user_workplace like #{pattern}
     </if>
+    order by a.lyj_user_allduration desc
   </select>
 
-  <select id="getUsersCount" resultType="com.feng.oldfriend.entity.LyjUser" >
+  <select id="getUsersCount" resultType="java.lang.Integer" >
     <!--<bind name="pattern" value="'%' + searchText + '%'"/>-->
 
     <choose>
@@ -262,8 +311,7 @@
     </choose>
     SELECT
     count(1)
-    from lyj_user a
-    LEFT JOIN lyj_volunteer b ON a.lyj_user_id = b.lyj_user_id
+    from lyj_user
     <if test="searchText!=null and searchText!=''">
       where lyj_user_name like #{pattern}
       or lyj_user_location like #{pattern}
@@ -273,7 +321,6 @@
       or lyj_user_workplace like #{pattern}
     </if>
   </select>
-
 
   <!--根据搜索条件以及用户状态对所有的用户进行查找-->
   <select id="getUsersByStatus" resultType="com.feng.oldfriend.entity.LyjUser" >
@@ -313,17 +360,18 @@
     where 1=1
     <if test="searchText!=null and searchText!=''">
       and (
-        lyj_user_name like #{pattern}
-        or lyj_user_location like #{pattern}
-        or lyj_user_country like #{pattern}
-        or lyj_user_phone like #{pattern}
-        or lyj_user_livingplace like #{pattern}
-        or lyj_user_workplace like #{pattern}
+      a.lyj_user_name like #{pattern}
+        or a.lyj_user_location like #{pattern}
+        or a.lyj_user_country like #{pattern}
+        or a.lyj_user_phone like #{pattern}
+        or a.lyj_user_livingplace like #{pattern}
+        or a.lyj_user_workplace like #{pattern}
       )
     </if>
     <if test="status!=null and status!=''">
       and a.lyj_user_applystate=#{status}
     </if>
+    order by a.lyj_user_allduration desc
   </select>
 
   <select id="getUsersCountByStatus" resultType="com.feng.oldfriend.entity.LyjUser" >
@@ -388,6 +436,7 @@
       or b.lyj_user_workplace like #{pattern}
       )
     </if>
+    order by b.lyj_user_allduration desc
   </select>
 
   <select id="getUsersByCompanyCount" resultType="java.lang.Integer" >
@@ -433,4 +482,8 @@
           #{single}
         </foreach>
   </update>
+
+  <select id="getUsersAdvanced" resultType="com.feng.oldfriend.entity.LyjUser">
+
+  </select>
 </mapper>

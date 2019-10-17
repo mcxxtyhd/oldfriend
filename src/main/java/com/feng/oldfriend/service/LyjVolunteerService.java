@@ -15,6 +15,13 @@ public interface LyjVolunteerService {
      */
     List<LyjVolunteer> getAllVolunteer(String searchText,Integer state);
 
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/10/17 21:12
+     * description: 获取志愿者的排行
+     */
+    List<LyjUser> getAllVolunteerTop(String searchText);
+
     Integer getAllVolunteerCount(String searchText,Integer state);
 
     /**
@@ -39,7 +46,14 @@ public interface LyjVolunteerService {
      * create time: 2019/8/13 22:30
      * description: 成为义工
      */
-    void becomeVolunteer(LyjUser userid);
+    void becomeVolunteer(LyjUser user);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/10/13 22:11
+     * description: 义工的信息编辑
+     */
+    void eidtVolunteer(LyjUser lyjUser);
 
 
     void removeVolunteer(Integer id);

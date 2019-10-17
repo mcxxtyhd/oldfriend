@@ -14,10 +14,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @author ：yangchenxiao
@@ -37,25 +38,66 @@ public class LyjRequirementController {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
             @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = true),
-            @ApiImplicitParam(paramType = "query", name = "typeId", dataType = "Integer", value = "需求类型ID", required = false)
+            @ApiImplicitParam(paramType = "query", name = "typeId", dataType = "Integer", value = "需求类型ID", required = false),
+            @ApiImplicitParam(paramType = "query", name = "state", dataType = "Integer", value = "需求审批状态", required = false)
+
     })
     @GetMapping()
     public CommonResponse getRequirement(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-                                            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-                                            @RequestParam(value = "searchText", required = true) String searchText,
-                                            @RequestParam(value = "typeId", required = false) Integer typeId) {
-        try{
+                                         @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                         @RequestParam(value = "searchText", required = true) String searchText,
+                                         @RequestParam(value = "typeId", required = false) Integer typeId,
+                                         @RequestParam(value = "state", required = false) Integer state) {
+        try {
             pageNo = pageNo == null ? 1 : pageNo;
             pageSize = pageSize == null ? 10 : pageSize;
 
             PageHelper.startPage(pageNo, pageSize);
 
             //判断是否需要根据需求类型ID进行查询
-            PageInfo pageInfo = new PageInfo(lyjRequirementService.getRequirements(searchText,typeId));
-            return new CommonResponse(pageInfo, 200,lyjRequirementService.getRequirementCount(searchText,typeId));
-        }catch (Exception e){
+            PageInfo pageInfo = new PageInfo(lyjRequirementService.getRequirements(searchText, typeId,state));
+            return new CommonResponse(pageInfo, 200, lyjRequirementService.getRequirementCount(searchText, typeId,state));
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+
+    }
+
+    @ApiOperation(value = "根据类别 城市 街道 开始时间 查询需求")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "查询关键字", required = false),
+            @ApiImplicitParam(paramType = "query", name = "typeId", dataType = "Integer", value = "需求类型ID", required = false),
+            @ApiImplicitParam(paramType = "query", name = "city", dataType = "String", value = "需求类型ID", required = false),
+            @ApiImplicitParam(paramType = "query", name = "street", dataType = "String", value = "需求类型ID", required = false),
+            @ApiImplicitParam(paramType = "query", name = "firstDate", dataType = "String", value = "查询的时间前", required = false),
+            @ApiImplicitParam(paramType = "query", name = "secondDate", dataType = "String", value = "查询的时间后", required = false),
+            @ApiImplicitParam(paramType = "query", name = "dateType", dataType = "Integer", value = "时间排序顺序类型(1:正序 2:反序)", required = false)
+    })
+    @GetMapping("/ManyParams")
+    public CommonResponse getRequirementByManyParameters(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                                         @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                                         @RequestParam(value = "searchText", required = false) String searchText,
+                                                         @RequestParam(value = "typeId", required = false) Integer typeId,
+                                                         @RequestParam(value = "city", required = false) String city,
+                                                         @RequestParam(value = "street", required = false) String street,
+                                                         @RequestParam(value = "firstDate", required = false) String firstDate,
+                                                         @RequestParam(value = "secondDate", required = false) String secondDate,
+                                                         @RequestParam(value = "dateType", required = false) Integer dateType) {
+        try {
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? 10 : pageSize;
+
+            PageHelper.startPage(pageNo, pageSize);
+
+            //判断是否需要根据需求类型ID进行查询
+            PageInfo pageInfo = new PageInfo(lyjRequirementService.getRequirementByManyParameters(searchText, typeId, city, street, firstDate, secondDate, dateType));
+            return new CommonResponse(pageInfo, 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
 
     }
@@ -66,27 +108,27 @@ public class LyjRequirementController {
     })
     @GetMapping("/type/{requirementId}")
     public CommonResponse getTypesById(@PathVariable("requirementId") Integer requirementId) {
-        try{
-            List<LyjRequirementType> types=lyjRequirementService.getTypesById(requirementId);
-            return new CommonResponse(types,200);
-        }catch (Exception e){
+        try {
+            List<LyjRequirementType> types = lyjRequirementService.getTypesById(requirementId);
+            return new CommonResponse(types, 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
     @ApiOperation(value = "根据需求ID查询详情")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需求ID", required = true),
+            @ApiImplicitParam(paramType = "query", name = "requirementId", dataType = "Integer", value = "需求ID", required = true)
     })
     @GetMapping("/{requirementId}")
     public CommonResponse getRequirementById(@PathVariable("requirementId") Integer requirementId) {
-        try{
-            LyjRequirement lyjRequirement=lyjRequirementService.getRequirementById(requirementId);
-            return new CommonResponse(lyjRequirement,200);
-        }catch (Exception e){
+        try {
+            LyjRequirement lyjRequirement = lyjRequirementService.getRequirementById(requirementId);
+            return new CommonResponse(lyjRequirement, 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -97,11 +139,11 @@ public class LyjRequirementController {
     })
     @GetMapping("/Mine/{uuid}")
     public CommonResponse getMyRequirement(@PathVariable("uuid") String uuid) {
-        try{
-            return new CommonResponse(lyjRequirementService.getMyRequirement(uuid),200);
-        }catch (Exception e){
+        try {
+            return new CommonResponse(lyjRequirementService.getMyRequirement(uuid), 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -111,11 +153,11 @@ public class LyjRequirementController {
     })
     @GetMapping("/MineAplly/{uuid}")
     public CommonResponse getMyApplyRequirement(@PathVariable("uuid") String uuid) {
-        try{
-            return new CommonResponse(lyjRequirementService.getMyApplyRequirement(uuid),200);
-        }catch (Exception e){
+        try {
+            return new CommonResponse(lyjRequirementService.getMyApplyRequirement(uuid), 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -125,13 +167,13 @@ public class LyjRequirementController {
             @ApiImplicitParam(paramType = "body", name = "requirement", dataType = "Requirement", value = "新增的需求信息", required = true)
     })
     @PostMapping("/{typeId}")
-    public CommonResponse addRequirement(@PathVariable("typeId") Integer typeId,@RequestBody LyjRequirement lyjRequirement) {
-        try{
-            lyjRequirementService.saveRequirement(typeId,lyjRequirement);
+    public CommonResponse addRequirement(@PathVariable("typeId") Integer typeId, @RequestBody LyjRequirement lyjRequirement) {
+        try {
+            lyjRequirementService.saveRequirement(typeId, lyjRequirement);
             return new CommonResponse(200);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -141,12 +183,12 @@ public class LyjRequirementController {
     })
     @PostMapping()
     public CommonResponse addRequirementAdvanced(@RequestBody LyjRequirementVO lyjRequirementVO) {
-        try{
+        try {
             lyjRequirementService.saveRequirementAdvanced(lyjRequirementVO);
-            return new CommonResponse(lyjRequirementVO,200);
-        }catch (Exception e){
+            return new CommonResponse(lyjRequirementVO, 200);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
     }
 
@@ -167,12 +209,12 @@ public class LyjRequirementController {
     })
     @DeleteMapping("/{requirementId}")
     public CommonResponse removeRequirement(@PathVariable("requirementId") Integer requirementId) {
-        try{
+        try {
             lyjRequirementService.removeRequirement(requirementId);
             return new CommonResponse(200);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
 
     }
@@ -212,5 +254,54 @@ public class LyjRequirementController {
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看", 500);
         }
+    }
+
+
+    @ApiOperation(value = "根据需求状态查询城市")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求的状态", required = false)
+    })
+    @GetMapping("/City")
+    public CommonResponse getRequirementCityByStatus(@RequestParam(value = "status", required = false) Integer status) {
+        try {
+            List<Map> datas = new ArrayList<>();
+            List<String> cities = lyjRequirementService.getRequirementCityByStatus(status);
+            for (String single : cities) {
+                Map nvdata = new HashMap();
+                nvdata.put("label", single);
+                nvdata.put("value", single);
+                datas.add(nvdata);
+            }
+            //判断是否需要根据需求类型ID进行查询
+            return new CommonResponse(datas, 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+
+    }
+
+    @ApiOperation(value = "根据需求状态查询街道")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求的状态", required = false)
+    })
+    @GetMapping("/Street")
+    public CommonResponse getRequirementStreetByStatus(@RequestParam(value = "status", required = false) Integer status) {
+        try {
+            List<Map> datas = new ArrayList<>();
+            List<String> streets = lyjRequirementService.getRequirementStreetByStatus(status);
+            for (String single : streets) {
+                Map nvdata = new HashMap();
+                nvdata.put("label", single);
+                nvdata.put("value", single);
+                datas.add(nvdata);
+            }
+            //判断是否需要根据需求类型ID进行查询
+            return new CommonResponse(datas, 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+
     }
 }

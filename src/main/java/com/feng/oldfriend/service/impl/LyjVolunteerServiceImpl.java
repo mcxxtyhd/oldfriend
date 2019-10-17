@@ -27,6 +27,11 @@ public class LyjVolunteerServiceImpl implements LyjVolunteerService {
     }
 
     @Override
+    public List<LyjUser> getAllVolunteerTop(String searchText) {
+        return lyjUserMapper.getAllVolunteerTop(searchText);
+    }
+
+    @Override
     public Integer getAllVolunteerCount(String searchText,Integer state) {
         return lyjVolunteerMapper.selectAllCount(searchText,state);
     }
@@ -66,6 +71,16 @@ public class LyjVolunteerServiceImpl implements LyjVolunteerService {
 
         //2、再更新用户
         lyjUserMapper.updateByPrimaryKeyForVolunteer(user);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/10/13 22:11
+     * description: 义工的信息编辑
+     */
+    @Override
+    public void eidtVolunteer(LyjUser lyjUser) {
+        lyjUserMapper.updateByPrimaryByUUID(lyjUser);
     }
 
     @Override

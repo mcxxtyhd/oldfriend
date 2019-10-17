@@ -1,7 +1,9 @@
 package com.feng.oldfriend.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.feng.oldfriend.Utils.DataUtils;
 import com.feng.oldfriend.VO.BatchUserState;
+import com.feng.oldfriend.dao.LyjBlacklistMapper;
 import com.feng.oldfriend.dao.LyjRequirementApplyMapper;
 import com.feng.oldfriend.dao.LyjRequirementMapper;
 import com.feng.oldfriend.dao.LyjVolunteerMapper;
@@ -10,6 +12,7 @@ import com.feng.oldfriend.enums.ApplyStatus;
 import com.feng.oldfriend.service.LyjRequirementApplyService;
 import com.feng.oldfriend.service.LyjRequirementService;
 import com.feng.oldfriend.service.LyjUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service("LyjRequirementApplyService")
 public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyService {
 
@@ -34,6 +38,9 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
 
     @Autowired
     private LyjVolunteerMapper lyjVolunteerMapper;
+
+    @Autowired
+    private LyjBlacklistMapper lyjBlacklistMapper;
 
 
     /**
@@ -57,7 +64,7 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
      * description: 根据参数(搜索内容,唯一标识ID)进行查找
      */
     @Override
-    public List<LyjRequirementApplyField> getRequirementByParams(String searchText, String uuid, Integer status) {
+    public List<LyjRequirementApplyField> getRequirementByParams(String searchText, String uuid, Integer[] status) {
 
         //先拿到所有的数据
         List<LyjRequirementApplyField> Result = lyjRequirementApplyMapper.getRequirementByParams(searchText, uuid, status);
@@ -74,13 +81,18 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
         return newResult;
     }
 
+    @Override
+    public Integer getRequirementByParamsCount(String searchText, String uuid, Integer[] status) {
+        return lyjRequirementApplyMapper.getRequirementByParamsCount(searchText, uuid, status);
+    }
+
     /**
      * create by: yangchenxiao
      * create time: 2019/7/21 11:05
      * description: 根据参数(搜索内容,唯一标识ID，需求的状态)进行查找
      */
     @Override
-    public List<LyjRequirementApplyField> getRequirementByParamsType(String searchText, String uuid, Integer status, Integer typeid) {
+    public List<LyjRequirementApplyField> getRequirementByParamsType(String searchText, String uuid, Integer[] status, Integer typeid) {
 
         //先拿到所有的数据
         List<LyjRequirementApplyField> oldResult = lyjRequirementApplyMapper.getRequirementByParams(searchText, uuid, status);
@@ -100,6 +112,7 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
             }
             //如果找到了 就加入到集合之中
             if (findFlag == true) {
+                single.setAllTypes(singleAllTypes);
                 newResult.add(single);
             }
         }
@@ -128,7 +141,7 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
             single.setLyj_user_id(user.getLyjUserUuid());
             single.setLyj_user_name(user.getLyjUserName());
             single.setLyj_user_phone(user.getLyjUserPhone());
-            single.setLyj_requirement_applyduration(user.getAllDuration());
+            single.setLyj_requirement_applyduration(user.getLyjUserAllduration());
             //星级评价
 //            single.setLyj_user_avestar(xx);
         }
@@ -174,7 +187,7 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
      */
     @Override
     @Transactional
-    public void batchUpdateApplyState(BatchUserState datas) throws Exception{
+    public Boolean batchUpdateApplyState(BatchUserState datas) throws Exception{
 
         //如果是更改为待完成  就往需求上加已申请的人数
         if(datas.getState()==3){
@@ -182,8 +195,19 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
             LyjRequirement requirement=lyjRequirementMapper.selectByPrimaryKey(lyjRequirementApplyMapper.selectByPrimaryKey(datas.getIds().get(0)).getLyjRequirementApplyrequirementid());
             //需求当前人数
             Integer currentNum=requirement.getLyjRequirementApplyednum();
+            //需要的人数
+            Integer needNum=requirement.getLyjRequirementNum();
+
+            //这次更新的数据数
+            Integer changeNum=currentNum+datas.getIds().size();
+
+            //如果大于 则说明人数超标了
+            if(changeNum>needNum){
+                return false;
+            }
+
             //将申请的加上
-            requirement.setLyjRequirementApplyednum(currentNum+datas.getIds().size());
+            requirement.setLyjRequirementApplyednum(changeNum);
             //改变需求状态
             lyjRequirementMapper.updateByPrimaryKeyNormal(requirement);
         }
@@ -213,6 +237,8 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
 
         //改变申请状态
         lyjRequirementApplyMapper.batchUpdateApplyState(datas);
+
+        return true;
     }
 
     @Override
@@ -289,5 +315,47 @@ public class LyjRequirementApplyServiceImpl implements LyjRequirementApplyServic
     public void updateApplyFailed(Integer requirementId, Integer requirementApplyId) {
         Integer status = ApplyStatus.FAILED.getCode();
         lyjRequirementApplyMapper.updateApplyFailed(requirementId, requirementApplyId, status);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/28 16:37
+     * description: 定时任务
+     */
+    @Override
+    public void updateApplyFinish() {
+        log.info("以下是定时任务处理的需求申请数据:"+JSON.toJSON(lyjRequirementApplyMapper.selectApplyFinish()));
+        lyjRequirementApplyMapper.updateApplyFinish();
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/10/8 21:52
+     * description: 检查当前用户是否能够申请该需求
+     */
+    @Override
+    public Boolean checkIfBeApplied(Integer requirementId, String uuid) {
+
+        //其实就判断以下两个条件
+
+        // 1、需求申请中 是否已经有同样的需求iD 和 uuid
+        Integer firstJudge=lyjRequirementApplyMapper.selectByRequirementAndUUID(requirementId,uuid);
+        if(firstJudge>0){
+            return false;
+        }
+
+        // 2、从已经申请了的需求中  状态等于1,3,4的  新申请的需求 开始时间和结束时间必须要么 同时大于 要么同时小于
+        LyjRequirement currentData=lyjRequirementMapper.selectByPrimaryKey(requirementId);
+        Integer secondJudge=lyjRequirementMapper.selectByDate(currentData.getLyjRequirementBegindatetime(),currentData.getLyjRequirementEnddatetime(),uuid);
+        if(secondJudge>0){
+            return false;
+        }
+
+        //3、这个人是否在黑名单之中
+        if(lyjBlacklistMapper.selectByUUID(uuid)!=null){
+            return false;
+        }
+
+        return true;
     }
 }

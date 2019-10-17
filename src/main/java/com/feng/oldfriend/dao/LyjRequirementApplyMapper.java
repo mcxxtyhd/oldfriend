@@ -68,7 +68,11 @@ public interface LyjRequirementApplyMapper {
      */
     List<LyjRequirementApplyField> getRequirementByParams(@Param("searchText") String searchText,
                                                           @Param("uuid") String uuid,
-                                                          @Param("status") Integer status);
+                                                          @Param("status") Integer[] status);
+
+    Integer getRequirementByParamsCount(@Param("searchText") String searchText,
+                                                          @Param("uuid") String uuid,
+                                                          @Param("status") Integer[] status);
 
 
     /**
@@ -115,4 +119,32 @@ public interface LyjRequirementApplyMapper {
     int updateApplyFailed(@Param("requirementId")Integer requirementId,
                           @Param("requirementApplyId") Integer requirementApplyId,
                           @Param("lyjRequirementApplystate")Integer lyjRequirementApplystate);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/27 21:52
+     * description: 根据用户信息  用户UUID和志愿者ID查询到所有的申请ID集合
+     */
+    List<Integer> getAllApplyIdsByUserInfo(@Param("uuid")String uuid,@Param("volunteerId")Integer volunteerId);
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/28 16:37
+     * description: 查询所有需要做定时任务的申请
+     */
+    List<Integer> selectApplyFinish();
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/28 16:37
+     * description: 定时任务
+     */
+    void updateApplyFinish();
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/10/9 22:21
+     * description: 根据UUID 和 需求ID查找是否有数据
+     */
+    Integer selectByRequirementAndUUID(@Param("requirementId") Integer requirementId, @Param("uuid") String uuid);
 }

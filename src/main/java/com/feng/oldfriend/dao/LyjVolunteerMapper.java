@@ -50,6 +50,7 @@ public interface LyjVolunteerMapper {
      */
     List<LyjVolunteer> selectAll(@Param("searchText") String searchText,@Param("status") Integer status);
 
+
     Integer selectAllCount(@Param("searchText") String searchText,@Param("status") Integer status);
 
     /**

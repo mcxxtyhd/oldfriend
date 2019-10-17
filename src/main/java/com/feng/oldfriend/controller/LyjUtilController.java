@@ -28,6 +28,10 @@ public class LyjUtilController {
      * create time: 2019/9/3 22:08
      * description: 微信接口的登录  没有用户就会注册
      */
+    @ApiOperation(value = "微信接口的登录  没有用户就会注册")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "code", dataType = "String", value = "微信的登录的验证code", required = true)
+    })
     @ResponseBody
     @GetMapping("/wxlogin")
     public CommonResponse user_login(@RequestParam(value = "code", required = false) String code)
@@ -47,6 +51,19 @@ public class LyjUtilController {
     })
     @PostMapping("/UploadImg")
     public CommonResponse uploadImg(@RequestParam("img") MultipartFile file) {
+        try{
+            //获得上传文件的地址
+            String filePath= lyjUtilService.saveFile(file);
+            return new CommonResponse(filePath, 200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse(500);
+        }
+    }
+
+    @ApiOperation(value = "上传图片返回图片地址")
+    @PostMapping("/UploadImgApi")
+    public CommonResponse uploadImgApi(@RequestParam("file") MultipartFile file) {
         try{
             //获得上传文件的地址
             String filePath= lyjUtilService.saveFile(file);

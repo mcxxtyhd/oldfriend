@@ -156,7 +156,7 @@ public class LyjCompanyController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "body", name = "LyjCompanyrequirementRelation", dataType = "LyjCompanyrequirementRelation", value = "新增的机构需求关系", required = true)
     })
-    @DeleteMapping("/CR")
+    @PostMapping("/DCR")
     public CommonResponse removeRelationCR(@RequestBody LyjCompanyrequirementRelation lyjCompanyrequirementRelation) {
         try{
             lyjCompanyService.removeRelationCR(lyjCompanyrequirementRelation);
@@ -233,7 +233,7 @@ public class LyjCompanyController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "body", name = "LyjCompanyrequirementRelation", dataType = "LyjCompanyrequirementRelation", value = "新增机构用户关系", required = true)
     })
-    @DeleteMapping("/CU")
+    @PostMapping("/DCU")
     public CommonResponse removeRelationCU(@RequestBody LyjCompanyuserRelation lyjCompanyuserRelation) {
         try{
             lyjCompanyService.removeRelationCU(lyjCompanyuserRelation);

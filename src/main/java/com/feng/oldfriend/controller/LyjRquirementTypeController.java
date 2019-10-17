@@ -47,7 +47,7 @@ public class LyjRquirementTypeController {
         PageHelper.startPage(pageNo, pageSize);
 
         PageInfo pageInfo = new PageInfo(lyjRquirementTypeService.getLyjRequirementTypes(searchText));
-        return new CommonResponse(pageInfo, 200,lyjRquirementTypeService.getLyjRequirementTypesCount(searchText));
+        return new CommonResponse(pageInfo, 200);
 
     }
 
@@ -133,6 +133,22 @@ public class LyjRquirementTypeController {
         try{
             lyjRquirementTypeService.removeRquirementType(rquirementTypeId);
             return new CommonResponse(200);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看",500);
+        }
+
+    }
+
+    @ApiOperation(value = "根据需求状态查询所有的需求类型")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "status", dataType = "Integer", value = "需求的状态", required = false)
+    })
+    @GetMapping("/Status")
+    public CommonResponse getRequirementTypeByStatus(@RequestParam(value = "status", required = false) Integer status) {
+        try{
+            //判断是否需要根据需求类型ID进行查询
+            return new CommonResponse(lyjRquirementTypeService.getRequirementTypeByStatus(status), 200);
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResponse("后台程序出错，请联系管理员查看",500);

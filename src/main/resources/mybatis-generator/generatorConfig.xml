@@ -80,6 +80,7 @@
 
         <!--<table tableName="lyj_companyuser_relation" />-->
         <!--<table tableName="lyj_companyrequirement_relation" />-->
+        <!--<table tableName="lyj_blacklist" />-->
 
 
     </context>

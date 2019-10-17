@@ -28,6 +28,34 @@ public class LyjVolunteerController {
     @Autowired
     private LyjVolunteerService lyjVolunteerService;
 
+
+    @ApiOperation(value = "根据服务时间拉取志愿者的排行")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Integer", value = "每页数量", defaultValue = "10"),
+            @ApiImplicitParam(paramType = "query", name = "searchText", dataType = "String", value = "搜索内容", required = false)
+
+    })
+    @GetMapping("/Top")
+    public CommonResponse getVolunteerTop(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                       @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                       @RequestParam(value = "searchText", required = false) String searchText) {
+        try {
+
+            pageNo = pageNo == null ? 1 : pageNo;
+            pageSize = pageSize == null ? 10 : pageSize;
+
+            PageHelper.startPage(pageNo, pageSize);
+            PageInfo pageInfo = new PageInfo(lyjVolunteerService.getAllVolunteerTop(searchText));
+
+            return new CommonResponse(pageInfo, 200);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
     @ApiOperation(value = "查询所有的义工")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(paramType = "query", name = "pageNo", dataType = "Integer", value = "页码", defaultValue = "0"),
@@ -120,6 +148,25 @@ public class LyjVolunteerController {
     public CommonResponse becomeVolunteer(@RequestBody LyjUser lyjUser) {
         try {
             lyjVolunteerService.becomeVolunteer(lyjUser);
+            return new CommonResponse(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResponse("后台程序出错，请联系管理员查看", 500);
+        }
+    }
+
+    /**
+     * create by: yangchenxiao
+     * description: 义工信息编辑
+     */
+    @ApiOperation(value = "义工信息编辑")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(paramType = "body", name = "editinfo", dataType = "LyjUser", value = "所需编辑的用户信息", required = true)
+    })
+    @PutMapping("/editV")
+    public CommonResponse editVolunteer(@RequestBody LyjUser lyjUser) {
+        try {
+            lyjVolunteerService.eidtVolunteer(lyjUser);
             return new CommonResponse(200);
         } catch (Exception e) {
             e.printStackTrace();

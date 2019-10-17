@@ -38,6 +38,70 @@ public class LyjRequirementApplyField {
     private List<LyjRequirementType> allTypes;
     private String lyj_user_phone;
     private Integer lyj_user_avestar;
+    private Integer lyj_requirement_process;
+
+    private Date lyj_requirement_apply_createdate;
+    private Date lyj_requirement_apply_rejectdate;
+    private Date lyj_requirement_apply_approvedate;
+    private Date lyj_requirement_apply_servicedate;
+    private Date lyj_requirement_apply_finishdate;
+    private Date lyj_requirement_apply_faildate;
+
+    public Date getLyj_requirement_apply_createdate() {
+        return lyj_requirement_apply_createdate;
+    }
+
+    public void setLyj_requirement_apply_createdate(Date lyj_requirement_apply_createdate) {
+        this.lyj_requirement_apply_createdate = lyj_requirement_apply_createdate;
+    }
+
+    public Date getLyj_requirement_apply_rejectdate() {
+        return lyj_requirement_apply_rejectdate;
+    }
+
+    public void setLyj_requirement_apply_rejectdate(Date lyj_requirement_apply_rejectdate) {
+        this.lyj_requirement_apply_rejectdate = lyj_requirement_apply_rejectdate;
+    }
+
+    public Date getLyj_requirement_apply_approvedate() {
+        return lyj_requirement_apply_approvedate;
+    }
+
+    public void setLyj_requirement_apply_approvedate(Date lyj_requirement_apply_approvedate) {
+        this.lyj_requirement_apply_approvedate = lyj_requirement_apply_approvedate;
+    }
+
+    public Date getLyj_requirement_apply_servicedate() {
+        return lyj_requirement_apply_servicedate;
+    }
+
+    public void setLyj_requirement_apply_servicedate(Date lyj_requirement_apply_servicedate) {
+        this.lyj_requirement_apply_servicedate = lyj_requirement_apply_servicedate;
+    }
+
+    public Date getLyj_requirement_apply_finishdate() {
+        return lyj_requirement_apply_finishdate;
+    }
+
+    public void setLyj_requirement_apply_finishdate(Date lyj_requirement_apply_finishdate) {
+        this.lyj_requirement_apply_finishdate = lyj_requirement_apply_finishdate;
+    }
+
+    public Date getLyj_requirement_apply_faildate() {
+        return lyj_requirement_apply_faildate;
+    }
+
+    public void setLyj_requirement_apply_faildate(Date lyj_requirement_apply_faildate) {
+        this.lyj_requirement_apply_faildate = lyj_requirement_apply_faildate;
+    }
+
+    public Integer getLyj_requirement_process() {
+        return lyj_requirement_process;
+    }
+
+    public void setLyj_requirement_process(Integer lyj_requirement_process) {
+        this.lyj_requirement_process = lyj_requirement_process;
+    }
 
     public Integer getLyj_user_avestar() {
         return lyj_user_avestar;

@@ -1,18 +1,14 @@
 package com.feng.oldfriend.service.impl;
 
 import com.feng.oldfriend.VO.BatchUserState;
-import com.feng.oldfriend.dao.LyjCompanyrequirementRelationMapper;
-import com.feng.oldfriend.dao.LyjRequirementMapper;
-import com.feng.oldfriend.dao.LyjRequirementtypeRelationMapper;
+import com.feng.oldfriend.dao.*;
 import com.feng.oldfriend.entity.*;
 import com.feng.oldfriend.service.LyjRequirementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service("LyjRequirementService")
 public class LyjRequirementServiceImpl implements LyjRequirementService {
@@ -23,6 +19,10 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
     private LyjRequirementtypeRelationMapper lyjRequirementtypeRelationMapper;
     @Autowired
     private LyjCompanyrequirementRelationMapper lyjCompanyrequirementRelationMapper;
+    @Autowired
+    private LyjRequirementApplyMapper lyjRequirementApplyMapper;
+    @Autowired
+    private LyjVolunteerMapper lyjVolunteerMapper;
 
     /**
      * create by: yangchenxiao
@@ -30,25 +30,40 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
      * description: 根据搜索条件获取需求数据
      */
     @Override
-    public List<LyjRequirement> getRequirements(String searchText,Integer typeId) {
+    public List<LyjRequirement> getRequirements(String searchText, Integer typeId, Integer state) {
 
         //判断需求类型ID是否为空，根据是否为空来提出两个不同的解决方案
-        if(null==typeId){
-            return lyjRequirementMapper.getLyjRequirements(searchText);
-        }else{
-            return lyjRequirementMapper.getLyjRequirementsByTypeId(searchText,typeId);
+        if (null == typeId) {
+            return lyjRequirementMapper.getLyjRequirements(searchText, state);
+        } else {
+            return lyjRequirementMapper.getLyjRequirementsByTypeId(searchText, typeId, state);
         }
     }
 
     @Override
-    public Integer getRequirementCount(String searchText, Integer typeId) {
+    public Integer getRequirementCount(String searchText, Integer typeId, Integer state) {
         //判断需求类型ID是否为空，根据是否为空来提出两个不同的解决方案
-        if(null==typeId){
-            return lyjRequirementMapper.getLyjRequirementsCount(searchText);
-        }else{
-            return lyjRequirementMapper.getLyjRequirementsByTypeIdCount(searchText,typeId);
+        if (null == typeId) {
+            return lyjRequirementMapper.getLyjRequirementsCount(searchText, state);
+        } else {
+            return lyjRequirementMapper.getLyjRequirementsByTypeIdCount(searchText, typeId, state);
         }
     }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 15:48
+     * description: 根据类别 城市 街道 开始时间 时间排序类型查询需求
+     */
+    @Override
+    public List<LyjRequirement> getRequirementByManyParameters(String searchText, Integer typeId, String city, String street, String firstDate, String secondDate, Integer dateType) {
+        if (null == typeId) {
+            return lyjRequirementMapper.getLyjRequirementsNoType(searchText, city, street, firstDate, secondDate, dateType);
+        } else {
+            return lyjRequirementMapper.getRequirementByManyParameters(searchText, typeId, city, street, firstDate, secondDate, dateType);
+        }
+    }
+
 
     /**
      * create by: yangchenxiao
@@ -57,7 +72,10 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
      */
     @Override
     public LyjRequirement getRequirementById(Integer requirementId) {
-        return lyjRequirementMapper.selectByPrimaryKey(requirementId);
+        LyjRequirement data = lyjRequirementMapper.selectByPrimaryKey(requirementId);
+        List<LyjRequirementType> currentdata = lyjRequirementMapper.getTypesById(data.getLyjRequirementId());
+        data.setAllTypes(currentdata);
+        return data;
     }
 
     /**
@@ -92,13 +110,13 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
 
     @Override
     @Transactional
-    public void saveRequirement(Integer typeId,LyjRequirement lyjRequirement) {
+    public void saveRequirement(Integer typeId, LyjRequirement lyjRequirement) {
         //1、先增加需求
         lyjRequirement.setLyjRequirementCreatedatetime(new Date());
         lyjRequirementMapper.insert(lyjRequirement);
-        Integer requirementId=lyjRequirement.getLyjRequirementId();
+        Integer requirementId = lyjRequirement.getLyjRequirementId();
         //2、再增加需求和类型关系表的数据
-        lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId,typeId));
+        lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId, typeId));
     }
 
     /**
@@ -112,17 +130,19 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
         //1、先增加需求
         lyjRequirementVO.setLyjRequirementCreatedatetime(new Date());
         lyjRequirementMapper.insertAdvanced(lyjRequirementVO);
-        Integer requirementId=lyjRequirementVO.getLyjRequirementId();
+        Integer requirementId = lyjRequirementVO.getLyjRequirementId();
 
-        if(null!=lyjRequirementVO.getAllTypeIds()){
-            for(Integer single:lyjRequirementVO.getAllTypeIds()){
+        if (null != lyjRequirementVO.getAllTypeIds()) {
+            for (Integer single : lyjRequirementVO.getAllTypeIds()) {
                 //2、再增加需求和类型关系表的数据
-                lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId,single));
+                lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(requirementId, single));
             }
         }
 
         //3、最后再增加机构关系表
-        lyjCompanyrequirementRelationMapper.insert(new LyjCompanyrequirementRelation(lyjRequirementVO.getLyjCompanyId(),requirementId));
+        if(lyjRequirementVO.getLyjCompanyId()!=null){
+            lyjCompanyrequirementRelationMapper.insert(new LyjCompanyrequirementRelation(lyjRequirementVO.getLyjCompanyId(), requirementId));
+        }
     }
 
     @Override
@@ -135,10 +155,10 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
         lyjRequirementMapper.updateByPrimaryKey(lyjRequirement);
 
         //3、再增加关系数据
-        if(null!=lyjRequirement.getAllTypeIds()){
-            for(Integer single:lyjRequirement.getAllTypeIds()){
+        if (null != lyjRequirement.getAllTypeIds()) {
+            for (Integer single : lyjRequirement.getAllTypeIds()) {
                 //2、再增加需求和类型关系表的数据
-                lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(lyjRequirement.getLyjRequirementId(),single));
+                lyjRequirementtypeRelationMapper.insert(new LyjRequirementtypeRelation(lyjRequirement.getLyjRequirementId(), single));
             }
         }
     }
@@ -179,15 +199,15 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
      * description: 根据机构查询需求
      */
     @Override
-    public List<LyjRequirement> getRequirementsByCompany(Integer state,Integer companyId, String searchText) {
-        List<LyjRequirement> datas=lyjRequirementMapper.getRequirementsByCompany(state,companyId,searchText);
+    public List<LyjRequirement> getRequirementsByCompany(Integer state, Integer companyId, String searchText) {
+        List<LyjRequirement> datas = lyjRequirementMapper.getRequirementsByCompany(state, companyId, searchText);
 
         //将需求类型的id加入
-        for(LyjRequirement single:datas){
-            List<Integer> typeids=new ArrayList<>();
+        for (LyjRequirement single : datas) {
+            List<Integer> typeids = new ArrayList<>();
 
-            List<LyjRequirementType> currentdata=lyjRequirementMapper.getTypesById(single.getLyjRequirementId());
-            for(LyjRequirementType onedata:currentdata){
+            List<LyjRequirementType> currentdata = lyjRequirementMapper.getTypesById(single.getLyjRequirementId());
+            for (LyjRequirementType onedata : currentdata) {
                 typeids.add(onedata.getLyjRequirementTypeid());
             }
             single.setAllTypeIds(typeids);
@@ -197,7 +217,29 @@ public class LyjRequirementServiceImpl implements LyjRequirementService {
     }
 
     @Override
-    public Integer getRequirementsCount(Integer state,Integer companyId, String searchText) {
-        return lyjRequirementMapper.getRequirementsByCompanyCount(state,companyId,searchText);
+    public Integer getRequirementsCount(Integer state, Integer companyId, String searchText) {
+        return lyjRequirementMapper.getRequirementsByCompanyCount(state, companyId, searchText);
     }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 15:14
+     * description: 根据需求状态查询城市
+     */
+    @Override
+    public List<String> getRequirementCityByStatus(Integer state) {
+        return lyjRequirementMapper.getRequirementCityByStatus(state);
+    }
+
+    /**
+     * create by: yangchenxiao
+     * create time: 2019/9/22 15:14
+     * description: 根据状态查询街道
+     */
+    @Override
+    public List<String> getRequirementStreetByStatus(Integer state) {
+        return lyjRequirementMapper.getRequirementStreetByStatus(state);
+    }
+
+
 }
